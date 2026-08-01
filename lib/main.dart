@@ -1,11 +1,13 @@
-import 'package:original_stock/wishlist_screen.dart';
-import 'package:original_stock/profile_screen.dart';
-import 'package:original_stock/search_screen.dart';
-import 'package:original_stock/home_screen.dart';
-import 'package:original_stock/cart_screen.dart';
+import 'package:original_stock/screens/splash_screen.dart';
+import 'package:original_stock/screens/wishlist_screen.dart';
+import 'package:original_stock/screens/profile_screen.dart';
+import 'package:original_stock/screens/search_screen.dart';
+import 'package:original_stock/screens/home_screen.dart';
+import 'package:original_stock/screens/cart_screen.dart';
 import 'package:original_stock/provider.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 void main() {
   runApp(
@@ -21,10 +23,17 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      theme: ThemeData(scaffoldBackgroundColor: Colors.black),
-      debugShowCheckedModeBanner: false,
-      home: const MainScreen(),
+    return ScreenUtilInit(
+      designSize: const Size(402, 874),
+      minTextAdapt: true,
+      splitScreenMode: true,
+      builder: (context, child) {
+        return MaterialApp(
+          theme: ThemeData(scaffoldBackgroundColor: Colors.black),
+          debugShowCheckedModeBanner: false,
+          home: const SplashScreen(),
+        );
+      },
     );
   }
 }
@@ -44,7 +53,7 @@ const List icons = [
   "assets/icons/people.png",
 ];
 int selectedPage = 0;
-double iconsDimentions = 28;
+double get iconsDimentions => 28.r;
 final Color backgroundColor = BackGroundColor.bcgcolor;
 
 class MainScreen extends StatefulWidget {
@@ -63,11 +72,11 @@ class _MainScreenState extends State<MainScreen> {
         children: [
           screens[selectedPage],
           Padding(
-            padding: const EdgeInsets.only(bottom: 25, right: 40, left: 40),
+            padding: EdgeInsets.only(bottom: 25.h, right: 40.w, left: 40.w),
             child: Container(
-              height: 65,
+              height: 65.h,
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(30),
+                borderRadius: BorderRadius.circular(30.r),
                 color: Colors.black,
               ),
               child: Row(
@@ -81,10 +90,10 @@ class _MainScreenState extends State<MainScreen> {
                       });
                     },
                     child: Container(
-                      height: 45,
-                      width: 45,
+                      height: 45.h,
+                      width: 45.w,
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(40),
+                        borderRadius: BorderRadius.circular(40.r),
                         color: selectedPage == index
                             ? Colors.white
                             : Colors.black,

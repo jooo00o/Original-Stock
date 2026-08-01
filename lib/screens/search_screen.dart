@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
-import 'package:original_stock/home_screen.dart';
+import 'package:original_stock/screens/home_screen.dart';
 import 'package:original_stock/main.dart';
-import 'package:original_stock/product_details.dart';
+import 'package:original_stock/screens/product_details.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});
@@ -45,135 +46,135 @@ class _SearchScreenState extends State<SearchScreen> {
         right: false,
         left: false,
         bottom: false,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              color: Colors.black,
-              child: Padding(
-                padding: ThisPadding.padding,
-                child: Column(
-                  children: [
-                    Row(
-                      children: [
-                        Navigator.canPop(context)
-                            ? GestureDetector(
-                                onTap: () {
-                                  Navigator.pop(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (BuildContext context) {
-                                        return HomeScreen();
-                                      },
-                                    ),
-                                  );
-                                },
-                                child: Icon(
-                                  Icons.arrow_back_ios,
-                                  size: 30,
-                                  color: Colors.white,
-                                ),
-                              )
-                            : Icon(
-                                Icons.filter_alt,
-                                size: 30,
-                                color: Colors.black,
-                              ),
-                        Spacer(),
-                        Text(
-                          'Search',
-                          style: TextStyle(
-                            fontSize: 24,
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        Spacer(),
-                        Icon(Icons.filter_alt, size: 30, color: Colors.black),
-                      ],
-                    ),
-                    Gap(25),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Container(
-                            height: 50,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(20),
-                              color: BackGroundProduct.color,
-                            ),
-                            child: TextField(
-                              focusNode: searchFocusNode,
-                              style: TextStyle(
-                                fontSize: 15,
-                                fontWeight: FontWeight.bold,
-                                color: searchFocusNode.hasFocus
-                                    ? Colors.black
-                                    : Colors.white,
-                              ),
-                              decoration: InputDecoration(
-                                filled: true,
-                                fillColor: searchFocusNode.hasFocus
-                                    ? Colors.white
-                                    : Colors.black,
-                                focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(20),
-                                ),
-                                enabledBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
+        child: SingleChildScrollView(
+          physics: const BouncingScrollPhysics(),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                color: Colors.black,
+                child: Padding(
+                  padding: ThisPadding.padding,
+                  child: Column(
+                    children: [
+                      Row(
+                        children: [
+                          Navigator.canPop(context)
+                              ? GestureDetector(
+                                  onTap: () {
+                                    Navigator.pop(context);
+                                  },
+                                  child: Icon(
+                                    Icons.arrow_back_ios,
+                                    size: 30.r,
                                     color: Colors.white,
-                                    width: 1.5,
                                   ),
-                                  borderRadius: BorderRadius.circular(20),
+                                )
+                              : Icon(
+                                  Icons.filter_alt,
+                                  size: 30.r,
+                                  color: Colors.black,
                                 ),
-                                hintText: "Search...",
-                                hintStyle: TextStyle(
-                                  fontSize: 20,
+                          Spacer(),
+                          Text(
+                            'Search',
+                            style: TextStyle(
+                              fontSize: 24.sp,
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          Spacer(),
+                          Icon(Icons.filter_alt, size: 30.r, color: Colors.black),
+                        ],
+                      ),
+                      Gap(25.h),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Container(
+                              height: 50.h,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(20.r),
+                                color: BackGroundProduct.color,
+                              ),
+                              child: TextField(
+                                focusNode: searchFocusNode,
+                                style: TextStyle(
+                                  fontSize: 15.sp,
                                   fontWeight: FontWeight.bold,
                                   color: searchFocusNode.hasFocus
                                       ? Colors.black
                                       : Colors.white,
                                 ),
-                                prefixIcon: Icon(
-                                  Icons.search,
-                                  size: 25,
-                                  color: searchFocusNode.hasFocus
-                                      ? Colors.black
-                                      : Colors.white,
+                                decoration: InputDecoration(
+                                  filled: true,
+                                  fillColor: searchFocusNode.hasFocus
+                                      ? Colors.white
+                                      : Colors.black,
+                                  focusedBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(20.r),
+                                  ),
+                                  enabledBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                      color: Colors.white,
+                                      width: 1.5.w,
+                                    ),
+                                    borderRadius: BorderRadius.circular(20.r),
+                                  ),
+                                  hintText: "Search...",
+                                  hintStyle: TextStyle(
+                                    fontSize: 20.sp,
+                                    fontWeight: FontWeight.bold,
+                                    color: searchFocusNode.hasFocus
+                                        ? Colors.black
+                                        : Colors.white,
+                                  ),
+                                  prefixIcon: Icon(
+                                    Icons.search,
+                                    size: 25.r,
+                                    color: searchFocusNode.hasFocus
+                                        ? Colors.black
+                                        : Colors.white,
+                                  ),
                                 ),
                               ),
                             ),
                           ),
-                        ),
-                        Gap(10),
-                        Container(
-                          height: 50,
-                          width: 50,
-                          decoration: BoxDecoration(
-                            border: Border.all(color: Colors.white, width: 1.5),
-                            borderRadius: BorderRadius.circular(25),
-                            // color: BackGroundProduct.color,
+                          Gap(10.w),
+                          Container(
+                            height: 50.h,
+                            width: 50.w,
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                color: Colors.white,
+                                width: 1.5.w,
+                              ),
+                              borderRadius: BorderRadius.circular(25.r),
+                            ),
+                            child: Center(
+                              child: Icon(
+                                Icons.filter_alt,
+                                color: Colors.white,
+                                size: 24.r,
+                              ),
+                            ),
                           ),
-                          child: Center(
-                            child: Icon(Icons.filter_alt, color: Colors.white),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
-            Gap(30),
-            Expanded(
-              child: Container(
+              Gap(30.h),
+              Container(
                 color: Colors.white,
                 child: Padding(
                   padding: EdgeInsets.only(
-                    bottom: 20,
-                    right: 11,
-                    left: 11,
-                    top: 10,
+                    bottom: Navigator.canPop(context) ? 25.h : 100.h,
+                    right: 11.w,
+                    left: 11.w,
+                    top: 10.h,
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -183,7 +184,7 @@ class _SearchScreenState extends State<SearchScreen> {
                           Text(
                             "Recent searches",
                             style: TextStyle(
-                              fontSize: 20,
+                              fontSize: 20.sp,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -191,25 +192,25 @@ class _SearchScreenState extends State<SearchScreen> {
                           Text(
                             "Clear",
                             style: TextStyle(
-                              fontSize: 20,
+                              fontSize: 20.sp,
                               color: Colors.blueAccent,
                             ),
                           ),
                         ],
                       ),
-                      Gap(15),
+                      Gap(15.h),
                       Wrap(
                         children: List.generate(recent.length, (index) {
                           return Padding(
-                            padding: const EdgeInsets.only(
-                              right: 10,
-                              bottom: 10,
+                            padding: EdgeInsets.only(
+                              right: 10.w,
+                              bottom: 10.h,
                             ),
                             child: Container(
-                              height: 45,
-                              width: 116.5,
+                              height: 45.h,
+                              width: 116.5.w,
                               decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(30),
+                                borderRadius: BorderRadius.circular(30.r),
                                 border: Border.all(color: Color(0xffe0e0e0)),
                                 color: Colors.white,
                               ),
@@ -218,12 +219,12 @@ class _SearchScreenState extends State<SearchScreen> {
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceEvenly,
                                   children: [
-                                    Icon(Icons.close, size: 20),
+                                    Icon(Icons.close, size: 20.r),
                                     Text(
                                       recent[index],
                                       style: TextStyle(
                                         fontWeight: FontWeight.bold,
-                                        fontSize: 14,
+                                        fontSize: 14.sp,
                                       ),
                                     ),
                                   ],
@@ -233,31 +234,31 @@ class _SearchScreenState extends State<SearchScreen> {
                           );
                         }),
                       ),
-                      Gap(15),
+                      Gap(15.h),
                       Row(
                         children: [
                           Text(
                             "Popular",
                             style: TextStyle(
-                              fontSize: 20,
+                              fontSize: 20.sp,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
                         ],
                       ),
-                      Gap(15),
+                      Gap(15.h),
                       Wrap(
                         children: List.generate(recent.length, (index) {
                           return Padding(
-                            padding: const EdgeInsets.only(
-                              right: 10,
-                              bottom: 10,
+                            padding: EdgeInsets.only(
+                              right: 10.w,
+                              bottom: 10.h,
                             ),
                             child: Container(
-                              height: 45,
-                              width: 116,
+                              height: 45.h,
+                              width: 116.w,
                               decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(30),
+                                borderRadius: BorderRadius.circular(30.r),
                                 border: Border.all(color: Color(0xffe0e0e0)),
                                 color: Colors.black,
                               ),
@@ -267,7 +268,7 @@ class _SearchScreenState extends State<SearchScreen> {
                                   style: TextStyle(
                                     color: Colors.white,
                                     fontWeight: FontWeight.bold,
-                                    fontSize: 15,
+                                    fontSize: 15.sp,
                                   ),
                                 ),
                               ),
@@ -275,18 +276,20 @@ class _SearchScreenState extends State<SearchScreen> {
                           );
                         }),
                       ),
-                      Gap(15),
+                      Gap(15.h),
                       Text(
                         "Best for you",
                         style: TextStyle(
-                          fontSize: 20,
+                          fontSize: 20.sp,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      Gap(20),
-                      Expanded(
+                      Gap(20.h),
+                      SizedBox(
+                        height: 300.h,
                         child: ListView.separated(
                           scrollDirection: Axis.horizontal,
+                          physics: BouncingScrollPhysics(),
                           itemBuilder: ((context, index) {
                             return GestureDetector(
                               onTap: () {
@@ -300,10 +303,11 @@ class _SearchScreenState extends State<SearchScreen> {
                                 );
                               },
                               child: Container(
-                                width: 170,
+                                height: 250.h,
+                                width: 170.w,
                                 decoration: BoxDecoration(
                                   border: Border.all(color: Colors.grey),
-                                  borderRadius: BorderRadius.circular(12),
+                                  borderRadius: BorderRadius.circular(12.r),
                                 ),
                                 child: Column(
                                   mainAxisAlignment:
@@ -311,55 +315,56 @@ class _SearchScreenState extends State<SearchScreen> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Container(
-                                      height: 170,
-                                      width: 170,
+                                      width: 170.w,
                                       decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(11),
+                                        borderRadius: BorderRadius.circular(11.r),
                                         border: Border.all(
                                           color: const Color(0xFFBDBDBD),
                                         ),
                                         color: Colors.grey[200],
                                       ),
-                                      child: Center(
+                                      child: ClipRRect(
+                                        borderRadius: BorderRadius.circular(11.r),
                                         child: Image.asset(
                                           products[index].image,
+                                          fit: BoxFit.cover,
                                         ),
                                       ),
                                     ),
                                     Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 8.0,
-                                        vertical: 4.0,
+                                      padding: EdgeInsets.symmetric(
+                                        horizontal: 8.0.w,
+                                        vertical: 4.0.h,
                                       ),
                                       child: Column(
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
                                         children: [
                                           Text(
-                                            'Tokyo Winter Jacket',
+                                            products[index].name,
                                             style: TextStyle(
-                                              fontSize: 14,
+                                              fontSize: 14.sp,
                                               color: Colors.black,
                                               fontWeight: FontWeight.w600,
                                             ),
                                           ),
-                                          const SizedBox(height: 4),
+                                          SizedBox(height: 4.h),
                                           Row(
                                             children: [
                                               Text(
-                                                '\$ 640.00',
+                                                products[index].price,
                                                 style: TextStyle(
-                                                  fontSize: 14,
+                                                  fontSize: 18.sp,
                                                   fontWeight: FontWeight.w700,
                                                 ),
                                               ),
                                               Spacer(),
                                               Container(
-                                                height: 40,
-                                                width: 40,
+                                                height: 40.h,
+                                                width: 40.w,
                                                 decoration: BoxDecoration(
                                                   borderRadius:
-                                                      BorderRadius.circular(40),
+                                                      BorderRadius.circular(40.r),
                                                   color: Colors.black,
                                                 ),
                                                 child: Center(
@@ -382,7 +387,7 @@ class _SearchScreenState extends State<SearchScreen> {
                             );
                           }),
                           separatorBuilder: ((context, index) {
-                            return Gap(10);
+                            return Gap(10.w);
                           }),
                           itemCount: products.length,
                         ),
@@ -391,8 +396,8 @@ class _SearchScreenState extends State<SearchScreen> {
                   ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

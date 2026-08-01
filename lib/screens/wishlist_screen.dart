@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
-import 'package:original_stock/home_screen.dart';
+import 'package:original_stock/screens/home_screen.dart';
 import 'package:original_stock/main.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class WishlistScreen extends StatelessWidget {
   const WishlistScreen({super.key});
@@ -18,26 +19,26 @@ class WishlistScreen extends StatelessWidget {
             children: [
               Row(
                 children: [
-                  Icon(Icons.filter_alt, size: 30, color: Colors.white),
+                  Icon(Icons.filter_alt, size: 30.r, color: Colors.white),
                   Spacer(),
                   Text(
                     'Wishlist',
-                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                    style: TextStyle(fontSize: 24.sp, fontWeight: FontWeight.bold),
                   ),
                   Spacer(),
-                  Icon(Icons.filter_alt, size: 30, color: Colors.white),
+                  Icon(Icons.filter_alt, size: 30.r, color: Colors.white),
                 ],
               ),
-              Gap(30),
+              Gap(30.h),
               Text(
                 "6 saved items",
                 style: TextStyle(
-                  fontSize: 20,
+                  fontSize: 20.sp,
                   fontWeight: FontWeight.w600,
                   color: Colors.grey,
                 ),
               ),
-              Gap(20),
+              Gap(20.h),
               GridviewConts(favorate: true),
             ],
           ),

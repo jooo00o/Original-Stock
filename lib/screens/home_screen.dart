@@ -1,10 +1,11 @@
-import 'package:original_stock/product_details.dart';
+import 'package:original_stock/screens/product_details.dart';
 import 'package:original_stock/provider.dart';
-import 'package:original_stock/search_screen.dart';
+import 'package:original_stock/screens/search_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
-import 'package:original_stock/see_all_screen.dart';
+import 'package:original_stock/screens/see_all_screen.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -16,6 +17,7 @@ class HomeScreen extends StatelessWidget {
       body: SafeArea(
         bottom: false,
         child: SingleChildScrollView(
+          physics: BouncingScrollPhysics(),
           child: Padding(
             padding: ThisPadding.padding,
             child: Column(
@@ -23,11 +25,11 @@ class HomeScreen extends StatelessWidget {
               children: [
                 AppBar(),
                 Container(
-                  height: 200,
+                  height: 200.h,
                   width: double.infinity,
                   color: Colors.white,
                   child: ClipRRect(
-                    borderRadius: BorderRadius.circular(15),
+                    borderRadius: BorderRadius.circular(15.r),
                     child: Stack(
                       fit: StackFit.expand,
                       children: [
@@ -39,15 +41,15 @@ class HomeScreen extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
                             Container(
-                              height: 40,
+                              height: 40.h,
                               width: double.infinity,
                               decoration: BoxDecoration(
                                 boxShadow: [
                                   BoxShadow(
                                     color: Colors.black,
-                                    blurRadius: 35,
-                                    spreadRadius: 15,
-                                    offset: Offset(0, 4),
+                                    blurRadius: 35.r,
+                                    spreadRadius: 15.r,
+                                    offset: Offset(0, 4.h),
                                   ),
                                 ],
                               ),
@@ -55,10 +57,10 @@ class HomeScreen extends StatelessWidget {
                           ],
                         ),
                         Padding(
-                          padding: const EdgeInsets.only(
-                            right: 10,
-                            left: 10,
-                            bottom: 10,
+                          padding: EdgeInsets.only(
+                            right: 10.w,
+                            left: 10.w,
+                            bottom: 10.h,
                           ),
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.end,
@@ -67,7 +69,7 @@ class HomeScreen extends StatelessWidget {
                                 'Discover \nSummer Collection',
                                 style: TextStyle(
                                   color: Colors.white,
-                                  fontSize: 20,
+                                  fontSize: 20.sp,
                                   letterSpacing: 1,
                                   wordSpacing: -5,
                                   fontWeight: FontWeight.w800,
@@ -76,10 +78,10 @@ class HomeScreen extends StatelessWidget {
                               ),
                               Spacer(),
                               Container(
-                                height: 40,
-                                width: 115,
+                                height: 40.h,
+                                width: 115.w,
                                 decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(8),
+                                  borderRadius: BorderRadius.circular(8.r),
                                   color: Colors.white,
                                 ),
                                 child: Center(
@@ -87,7 +89,7 @@ class HomeScreen extends StatelessWidget {
                                     'Shop Now',
                                     style: TextStyle(
                                       color: Colors.black,
-                                      fontSize: 18,
+                                      fontSize: 18.sp,
                                       fontWeight: FontWeight.w500,
                                     ),
                                   ),
@@ -100,13 +102,13 @@ class HomeScreen extends StatelessWidget {
                     ),
                   ),
                 ),
-                Gap(20),
+                Gap(20.h),
                 Row(
                   children: [
                     Text(
                       'Categories',
                       style: TextStyle(
-                        fontSize: 23,
+                        fontSize: 23.sp,
                         wordSpacing: -5,
                         color: Colors.black,
                         fontWeight: FontWeight.w600,
@@ -128,7 +130,7 @@ class HomeScreen extends StatelessWidget {
                       child: Text(
                         "See All",
                         style: TextStyle(
-                          fontSize: 18,
+                          fontSize: 18.sp,
                           color: Colors.grey[500],
                           fontWeight: FontWeight.w600,
                         ),
@@ -136,22 +138,22 @@ class HomeScreen extends StatelessWidget {
                     ),
                   ],
                 ),
-                Gap(10),
-                SizedBox(height: 140, child: ListviewProducts()),
-                Gap(10),
+                Gap(10.h),
+                SizedBox(height: 140.h, child: ListviewProducts()),
+                Gap(10.h),
                 Text(
                   'Top Product',
                   style: TextStyle(
-                    fontSize: 23,
+                    fontSize: 23.sp,
                     wordSpacing: -5,
                     color: Colors.black,
                     fontWeight: FontWeight.w600,
                     fontFamily: "CourierPrime",
                   ),
                 ),
-                Gap(10),
+                Gap(10.h),
                 GridviewConts(favorate: false),
-                Gap(100),
+                Gap(100.h),
               ],
             ),
           ),
@@ -173,9 +175,16 @@ class AppBar extends StatelessWidget {
           padding: ThisPadding.padding,
           child: Row(
             children: [
-              Icon(Icons.settings, size: iconsize),
+              Icon(Icons.notifications, size: iconsize.r),
               Spacer(),
-              AppName.name,
+              Text(
+                'Original Stock',
+                style: TextStyle(
+                  fontSize: 24.sp,
+                  color: Colors.black,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
               Spacer(),
               GestureDetector(
                 onTap: () {
@@ -188,7 +197,7 @@ class AppBar extends StatelessWidget {
                     ),
                   );
                 },
-                child: Icon(Icons.search, size: iconsize),
+                child: Icon(Icons.search, size: iconsize.r),
               ),
             ],
           ),
@@ -226,22 +235,22 @@ class _CategoryContState extends State<CategoryCont> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(right: 10),
+      padding: EdgeInsets.only(right: 10.w),
       child: Container(
         height: widget.height,
         width: widget.width,
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(widget.border),
+          borderRadius: BorderRadius.circular(widget.border.r),
           color: widget.color,
           border: Border.all(color: Colors.black, width: 0.15),
         ),
         child: Center(
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10),
+            padding: EdgeInsets.symmetric(horizontal: 10.w),
             child: Text(
               widget.text,
               style: TextStyle(
-                fontSize: fontSize,
+                fontSize: fontSize.sp,
                 color: widget.fontcolor,
                 letterSpacing: -0.5,
                 fontFamily: "CourierPrime",
@@ -255,18 +264,7 @@ class _CategoryContState extends State<CategoryCont> {
 }
 
 class ThisPadding {
-  static const padding = EdgeInsets.symmetric(horizontal: 11);
-}
-
-class AppName {
-  static const name = Text(
-    'Original Stock',
-    style: TextStyle(
-      fontSize: 24,
-      color: Colors.black,
-      fontWeight: FontWeight.bold,
-    ),
-  );
+  static EdgeInsets get padding => EdgeInsets.symmetric(horizontal: 11.w);
 }
 
 class BackGroundProduct {
@@ -302,7 +300,7 @@ class _LisvviewSaparatedState extends State<LisvviewSaparated> {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 40,
+      height: 40.h,
       width: double.infinity,
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
@@ -322,7 +320,7 @@ class _LisvviewSaparatedState extends State<LisvviewSaparated> {
           );
         },
         separatorBuilder: (context, index) {
-          return SizedBox(width: 5);
+          return SizedBox(width: 5.w);
         },
         itemCount: category.length,
       ),
@@ -342,9 +340,9 @@ class GridviewConts extends StatelessWidget {
       itemCount: products.length,
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
-        crossAxisSpacing: 15,
-        mainAxisSpacing: 20,
-        childAspectRatio: 0.650,
+        crossAxisSpacing: 15.w,
+        mainAxisSpacing: 20.h,
+        childAspectRatio: 0.550,
       ),
       itemBuilder: (context, index) {
         return GestureDetector(
@@ -367,31 +365,36 @@ class GridviewConts extends StatelessWidget {
                 Stack(
                   children: [
                     Container(
-                      height: 190,
                       width: double.infinity,
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(11),
+                        borderRadius: BorderRadius.circular(11.r),
                         border: Border.all(color: const Color(0xFFBDBDBD)),
                         color: Colors.grey[200],
                       ),
-                      child: Center(child: Image.asset(products[index].image)),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(11.r),
+                        child: Image.asset(
+                          products[index].image,
+                          fit: BoxFit.fill,
+                        ),
+                      ),
                     ),
-                    ?favorate
-                        ? Positioned(
-                            top: 10,
-                            right: 10,
-                            child: Icon(
-                              Icons.favorite_border_rounded,
-                              color: Colors.grey[700],
-                            ),
-                          )
-                        : null,
+                    if (favorate)
+                      Positioned(
+                        top: 10.h,
+                        right: 10.w,
+                        child: Icon(
+                          Icons.favorite_border_rounded,
+                          color: Colors.grey[700],
+                          size: 24.r,
+                        ),
+                      ),
                   ],
                 ),
                 Text(
                   'The North Face',
                   style: TextStyle(
-                    fontSize: 16,
+                    fontSize: 16.sp,
                     color: Colors.grey[500],
                     fontWeight: FontWeight.w600,
                   ),
@@ -399,7 +402,7 @@ class GridviewConts extends StatelessWidget {
                 Text(
                   products[index].name,
                   style: TextStyle(
-                    fontSize: 17.7,
+                    fontSize: 17.7.sp,
                     color: Colors.black,
                     fontWeight: FontWeight.w600,
                   ),
@@ -410,16 +413,16 @@ class GridviewConts extends StatelessWidget {
                     Text(
                       products[index].price,
                       style: TextStyle(
-                        fontSize: 17,
+                        fontSize: 17.sp,
                         fontWeight: FontWeight.w700,
                       ),
                     ),
                     Spacer(),
-                    Icon(Icons.star, color: Colors.orange),
+                    Icon(Icons.star, color: Colors.orange, size: 20.r),
                     Text(
                       products[index].rating,
                       style: TextStyle(
-                        fontSize: 17,
+                        fontSize: 17.sp,
                         fontWeight: FontWeight.w700,
                       ),
                     ),
@@ -466,29 +469,30 @@ class ListviewProducts extends StatelessWidget {
     ];
     return ListView.separated(
       scrollDirection: Axis.horizontal,
+      physics: BouncingScrollPhysics(),
       itemBuilder: (context, index) {
         return Column(
           children: [
             SizedBox(
-              height: 100,
-              width: 100,
+              height: 100.h,
+              width: 100.w,
               child: Center(
                 child: ClipRRect(
-                  borderRadius: BorderRadius.circular(50),
+                  borderRadius: BorderRadius.circular(50.r),
                   child: Image.asset(productsData[index]["img"]),
                 ),
               ),
             ),
-            Gap(5),
+            Gap(5.h),
             Text(
               productsData[index]["name"],
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
+              style: TextStyle(fontSize: 20.sp, fontWeight: FontWeight.w500),
             ),
           ],
         );
       },
       separatorBuilder: (context, index) {
-        return Gap(15);
+        return Gap(15.w);
       },
       itemCount: productsData.length,
     );
@@ -499,22 +503,30 @@ List<ProductModel> products = [
   ProductModel(
     name: "Tokyo Winter Jacket",
     image:
-        "assets/images/jacket-with-hood-that-says-winter_1277670-18691-removebg-preview.png",
-    price: "\$ 640.00",
+        "assets/images/686506127_18133742785562861_5213842607967549061_n.jpg",
+    price: "\$ 640",
     rating: "4.8",
   ),
   ProductModel(
     name: "Tokyo Winter Jacket",
     image:
-        "assets/images/stylish-black-grey-hooded-jacket-with-white-removebg-preview.png",
-    price: "\$ 220.00",
-    rating: "4.8",
+        "assets/images/696679803_18133742905562861_8782142470978230832_n.jpg",
+    price: "\$ 220",
+    rating: "4.0",
   ),
   ProductModel(
     name: "Tokyo Winter Jacket",
-    image: "assets/images/corduroy-jacket-isolated_624181-13371-Photoroom.png",
-    price: "\$ 100.00",
-    rating: "4.8",
+    image:
+        "assets/images/703796768_18133742803562861_1683141948809483400_n.jpg",
+    price: "\$ 160",
+    rating: "4.2",
+  ),
+  ProductModel(
+    name: "Tokyo Winter Jacket",
+    image:
+        "assets/images/705968716_18133742740562861_1785207526640979999_n.jpg",
+    price: "\$ 390",
+    rating: "4.2",
   ),
 ];
 

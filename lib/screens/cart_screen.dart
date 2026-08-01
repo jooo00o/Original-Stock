@@ -1,34 +1,35 @@
-import 'package:original_stock/checkout_screen.dart';
-import 'package:original_stock/home_screen.dart';
+import 'package:original_stock/screens/checkout_screen.dart';
+import 'package:original_stock/screens/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class CartScreen extends StatelessWidget {
   const CartScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final double fontsize = 18;
+    final double fontsize = 18.sp;
     final FontWeight fontweight = FontWeight.w600;
     final color = Colors.grey[800];
     return Scaffold(
       backgroundColor: Colors.white,
       bottomNavigationBar: Padding(
         padding: EdgeInsets.only(
-          bottom: Navigator.canPop(context) ? 20 : 100,
-          right: 20,
-          left: 20,
-          top: 10,
+          bottom: Navigator.canPop(context) ? 20.h : 100.h,
+          right: 20.w,
+          left: 20.w,
+          top: 10.h,
         ),
         child: SizedBox(
-          height: 250,
+          height: 250.h,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
                 "Order sammery",
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                style: TextStyle(fontSize: 20.sp, fontWeight: FontWeight.bold),
               ),
               Row(
                 children: [
@@ -93,15 +94,15 @@ class CartScreen extends StatelessWidget {
                   ),
                 ],
               ),
-              Gap(5),
+              Gap(5.h),
               Divider(),
-              Gap(5),
+              Gap(5.h),
               Row(
                 children: [
                   Text(
                     "Total Payment:",
                     style: TextStyle(
-                      fontSize: fontsize + 2,
+                      fontSize: fontsize + 2.sp,
                       fontWeight: fontweight,
                       color: Colors.black,
                     ),
@@ -110,14 +111,14 @@ class CartScreen extends StatelessWidget {
                   Text(
                     "\$640.00",
                     style: TextStyle(
-                      fontSize: fontsize + 2,
+                      fontSize: fontsize + 2.sp,
                       fontWeight: fontweight,
                       color: Colors.black,
                     ),
                   ),
                 ],
               ),
-              Gap(10),
+              Gap(10.h),
               GestureDetector(
                 onTap: () {
                   Navigator.push(
@@ -130,16 +131,16 @@ class CartScreen extends StatelessWidget {
                   );
                 },
                 child: Container(
-                  height: 65,
+                  height: 65.h,
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(40),
+                    borderRadius: BorderRadius.circular(40.r),
                     color: Colors.black,
                   ),
                   child: Center(
                     child: Text(
                       "Checkout . \$640",
                       style: TextStyle(
-                        fontSize: 20,
+                        fontSize: 20.sp,
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
                       ),
@@ -164,41 +165,42 @@ class CartScreen extends StatelessWidget {
                           onTap: () {
                             Navigator.pop(context);
                           },
-                          child: Icon(Icons.arrow_back_ios_new),
+                          child: Icon(Icons.arrow_back_ios_new, size: 24.r),
                         )
-                      : Icon(Icons.favorite, color: Colors.white),
+                      : Icon(Icons.favorite, color: Colors.white, size: 24.r),
                   Spacer(),
                   Text(
                     'Cart',
-                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                    style: TextStyle(fontSize: 24.sp, fontWeight: FontWeight.bold),
                   ),
                   Spacer(),
-                  Icon(Icons.favorite, color: Colors.white),
+                  Icon(Icons.favorite, color: Colors.white, size: 24.r),
                 ],
               ),
-              Gap(30),
+              Gap(30.h),
               Expanded(
                 child: ListView.separated(
+                  physics: BouncingScrollPhysics(),
                   itemBuilder: (context, index) {
                     return Container(
-                      height: 150,
+                      height: 150.h,
                       width: double.infinity,
                       decoration: BoxDecoration(
                         border: Border.all(color: Colors.grey),
-                        borderRadius: BorderRadius.circular(13),
+                        borderRadius: BorderRadius.circular(13.r),
                       ),
                       child: Padding(
-                        padding: const EdgeInsets.all(8.0),
+                        padding: EdgeInsets.all(8.0.r),
                         child: Row(
                           children: [
                             Container(
-                              height: 130,
-                              width: 130,
+                              height: 130.h,
+                              width: 130.w,
                               decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(20),
+                                borderRadius: BorderRadius.circular(20.r),
                                 border: Border.all(
                                   color: Colors.grey,
-                                  width: 0.05,
+                                  width: 0.05.w,
                                 ),
                                 color: BackGroundProduct.color,
                               ),
@@ -209,7 +211,7 @@ class CartScreen extends StatelessWidget {
                                 ),
                               ),
                             ),
-                            Gap(10),
+                            Gap(10.w),
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -217,7 +219,7 @@ class CartScreen extends StatelessWidget {
                                 Text(
                                   'Tokyo Winter Jacket',
                                   style: TextStyle(
-                                    fontSize: 18,
+                                    fontSize: 18.sp,
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
@@ -225,14 +227,14 @@ class CartScreen extends StatelessWidget {
                                   'Size: L ,Grey',
                                   style: TextStyle(
                                     color: Colors.grey,
-                                    fontSize: 17,
+                                    fontSize: 17.sp,
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
                                 Text(
                                   '\$640,00',
                                   style: TextStyle(
-                                    fontSize: 21,
+                                    fontSize: 21.sp,
                                     color: Colors.black,
                                     fontWeight: FontWeight.w500,
                                   ),
@@ -241,15 +243,15 @@ class CartScreen extends StatelessWidget {
                                   children: [
                                     Icon(
                                       Icons.remove_circle_outline,
-                                      size: 30,
+                                      size: 30.r,
                                       color: Colors.red,
                                     ),
-                                    Gap(5),
-                                    Text("1", style: TextStyle(fontSize: 20)),
-                                    Gap(5),
+                                    Gap(5.w),
+                                    Text("1", style: TextStyle(fontSize: 20.sp)),
+                                    Gap(5.w),
                                     Icon(
                                       Icons.add_circle_outline,
-                                      size: 30,
+                                      size: 30.r,
                                       color: Colors.green,
                                     ),
                                   ],
@@ -262,7 +264,7 @@ class CartScreen extends StatelessWidget {
                     );
                   },
                   separatorBuilder: (context, index) {
-                    return Gap(10);
+                    return Gap(10.h);
                   },
                   itemCount: 10,
                 ),
