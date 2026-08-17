@@ -153,7 +153,7 @@ class HomeScreen extends StatelessWidget {
                 ),
                 Gap(10.h),
                 GridviewConts(favorate: false),
-                Gap(100.h),
+                Gap(60.h),
               ],
             ),
           ),
