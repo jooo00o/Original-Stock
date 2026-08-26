@@ -37,6 +37,8 @@ dependencies:
   gap: ^3.0.1
   provider: ^6.1.5+1
   flutter_screenutil: ^5.9.3
+  dio: ^5.11.0
+  flutter_secure_storage: ^11.0.0
 
 
 dev_dependencies:
@@ -81,7 +83,12 @@ flutter:
     - family: CourierPrime
       fonts:
         - asset: assets/fonts/CourierPrime-Regular.ttf
-     
+    - family: Cairo
+      fonts:
+        - asset: assets/fonts/Cairo-Bold.ttf
+        - asset: assets/fonts/Cairo-Medium.ttf
+        - asset: assets/fonts/Cairo-Regular.ttf
+        - asset: assets/fonts/Cairo-SemiBold.ttf
 
   #
   # For details regarding fonts from package dependencies,

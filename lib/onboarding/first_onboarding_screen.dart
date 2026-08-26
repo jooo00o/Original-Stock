@@ -35,7 +35,7 @@ class FirstOnboardingScreen extends StatelessWidget {
               "Discover curated pieces from a wardrobe built to last.",
               textAlign: TextAlign.center,
               style: TextStyle(
-                fontSize: 15.5.sp,
+                fontSize: 17.sp,
                 fontFamily: "Cairo",
                 color: Colors.grey[600],
               ),

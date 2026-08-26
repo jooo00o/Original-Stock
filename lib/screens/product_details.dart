@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:original_stock/screens/cart_screen.dart';
 import 'package:original_stock/screens/checkout_screen.dart';
-import 'package:original_stock/screens/home_screen.dart';
+import 'package:original_stock/screens/home_screen.dart' hide AppBar;
 import 'package:original_stock/main.dart';
 import 'package:original_stock/provider.dart';
 import 'package:provider/provider.dart';
@@ -25,6 +25,24 @@ class _ProductDetailsState extends State<ProductDetails> {
   @override
   Widget build(BuildContext context) {
     final product = context.watch<ProviderProduct>().selectedProduct;
+    if (product == null) {
+      return Scaffold(
+        backgroundColor: Colors.white,
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          elevation: 0,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black),
+            onPressed: () => Navigator.pop(context),
+          ),
+          title: const Text(
+            'Product Details',
+            style: TextStyle(color: Colors.black),
+          ),
+        ),
+        body: const Center(child: Text('No product selected')),
+      );
+    }
     return Scaffold(
       bottomNavigationBar: SafeArea(
         bottom: false,
@@ -34,17 +52,38 @@ class _ProductDetailsState extends State<ProductDetails> {
             color: backgroundColor,
           ),
           child: Padding(
-            padding: EdgeInsets.only(right: 11.w, left: 11.w, top: 10.h, bottom: 30.h),
+            padding: EdgeInsets.only(
+              right: 11.w,
+              left: 11.w,
+              top: 10.h,
+              bottom: 30.h,
+            ),
             child: Row(
               children: [
                 Expanded(
                   child: GestureDetector(
                     onTap: () {
+                      final colorNames = ["Black", "Grey", "Light Grey"];
+                      final selectedColor = checkicon < colorNames.length
+                          ? colorNames[checkicon]
+                          : "Default";
+                      final selectedSize = size[currentsize];
+                      context.read<ProviderProduct>().addToCart(
+                        product,
+                        selectedSize,
+                        selectedColor,
+                      );
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text("${product.name} added to cart!"),
+                          duration: const Duration(seconds: 1),
+                        ),
+                      );
                       Navigator.push(
                         context,
                         MaterialPageRoute(
                           builder: (BuildContext context) {
-                            return CartScreen();
+                            return const CartScreen();
                           },
                         ),
                       );
@@ -58,7 +97,10 @@ class _ProductDetailsState extends State<ProductDetails> {
                       child: Center(
                         child: Text(
                           "Add To Cart",
-                          style: TextStyle(fontSize: 20.sp, color: Colors.white),
+                          style: TextStyle(
+                            fontSize: 20.sp,
+                            color: Colors.white,
+                          ),
                         ),
                       ),
                     ),
@@ -87,7 +129,10 @@ class _ProductDetailsState extends State<ProductDetails> {
                       child: Center(
                         child: Text(
                           "Buy Now",
-                          style: TextStyle(fontSize: 20.sp, color: Colors.black),
+                          style: TextStyle(
+                            fontSize: 20.sp,
+                            color: Colors.black,
+                          ),
                         ),
                       ),
                     ),
@@ -113,7 +158,29 @@ class _ProductDetailsState extends State<ProductDetails> {
                       color: BackGroundProduct.color,
                     ),
                     child: ClipRRect(
-                      child: Image.asset(product!.image, fit: BoxFit.cover),
+                      child:
+                          product.image.startsWith('http://') ||
+                              product.image.startsWith('https://')
+                          ? Image.network(
+                              product.image,
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) =>
+                                  Icon(
+                                    Icons.broken_image,
+                                    size: 50.r,
+                                    color: Colors.grey,
+                                  ),
+                            )
+                          : Image.asset(
+                              product.image,
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) =>
+                                  Icon(
+                                    Icons.broken_image,
+                                    size: 50.r,
+                                    color: Colors.grey,
+                                  ),
+                            ),
                     ),
                   ),
                   Row(
@@ -129,29 +196,50 @@ class _ProductDetailsState extends State<ProductDetails> {
                             color: Colors.white,
                           ),
                           padding: EdgeInsets.all(10.r),
-                          child: Icon(Icons.arrow_back_ios_new, size: 24.r),
+                          child: Icon(
+                            Icons.arrow_back_ios_new,
+                            size: 28.r,
+                            color: Colors.black,
+                          ),
                         ),
                       ),
                       Spacer(),
-                      GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            isBlack = !isBlack;
-                          });
+                      Builder(
+                        builder: (context) {
+                          final isInWishlist = context
+                              .watch<ProviderProduct>()
+                              .isProductInWishlist(product);
+                          return GestureDetector(
+                            onTap: () {
+                              context
+                                  .read<ProviderProduct>()
+                                  .toggleWishlist(product);
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(
+                                    isInWishlist
+                                        ? "${product.name} removed from wishlist"
+                                        : "${product.name} added to wishlist!",
+                                  ),
+                                  duration: const Duration(seconds: 1),
+                                ),
+                              );
+                            },
+                            child: Container(
+                              margin: EdgeInsets.all(12.r),
+                              decoration: const BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: Colors.white,
+                              ),
+                              padding: EdgeInsets.all(10.r),
+                              child: Icon(
+                                Icons.favorite,
+                                size: 28.r,
+                                color: isInWishlist ? Colors.red : Colors.black,
+                              ),
+                            ),
+                          );
                         },
-                        child: Container(
-                          margin: EdgeInsets.all(12.r),
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: Colors.white,
-                          ),
-                          padding: EdgeInsets.all(10.r),
-                          child: Icon(
-                            Icons.favorite,
-                            size: 28.r,
-                            color: isBlack ? Colors.black : Colors.red,
-                          ),
-                        ),
                       ),
                     ],
                   ),
@@ -311,7 +399,9 @@ class _ProductDetailsState extends State<ProductDetails> {
                                       height: 52.h,
                                       width: 52.w,
                                       decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(25.r),
+                                        borderRadius: BorderRadius.circular(
+                                          25.r,
+                                        ),
                                         color: Colors.black,
                                       ),
                                       child: Center(
@@ -350,7 +440,9 @@ class _ProductDetailsState extends State<ProductDetails> {
                                       width: 50.w,
                                       decoration: BoxDecoration(
                                         border: Border.all(color: Colors.grey),
-                                        borderRadius: BorderRadius.circular(25.r),
+                                        borderRadius: BorderRadius.circular(
+                                          25.r,
+                                        ),
                                         color: colorCont[index],
                                       ),
                                       child: Center(

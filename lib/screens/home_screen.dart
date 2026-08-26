@@ -1,3 +1,4 @@
+import 'package:original_stock/screens/notifications_screen.dart';
 import 'package:original_stock/screens/product_details.dart';
 import 'package:original_stock/provider.dart';
 import 'package:original_stock/screens/search_screen.dart';
@@ -7,8 +8,78 @@ import 'package:original_stock/screens/see_all_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  // final ScrollController _scrollController = ScrollController();
+  // final ApiService _apiService = ApiService();
+
+  // List<ProductModel> _products = [];
+  // bool _isFirstLoading = true;
+  // bool _isLoadingMore = false;
+  // bool _hasMore = true;
+  // int _page = 1;
+  // String? _errorMessage;
+
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   _loadProducts();
+  //   _scrollController.addListener(_onScroll);
+  // }
+
+  // @override
+  // void dispose() {
+  //   _scrollController.removeListener(_onScroll);
+  //   _scrollController.dispose();
+  //   super.dispose();
+  // }
+
+  // void _onScroll() {
+  //   if (!_scrollController.hasClients || _isLoadingMore || !_hasMore) return;
+
+  //   final maxScroll = _scrollController.position.maxScrollExtent;
+  //   final currentScroll = _scrollController.position.pixels;
+
+  //   if (currentScroll >= maxScroll - 250) {
+  //     _loadProducts();
+  //   }
+  // }
+  // Future<void> _loadProducts() async {
+  //   if (_isLoadingMore && !_isFirstLoading) return;
+  //   setState(() {
+  //     _isLoadingMore = true;
+  //     if (_isFirstLoading) {
+  //       _isFirstLoading = false;
+  //     }
+  //   });
+  //   try {
+  //     final newProducts = await _apiService.fetchProducts(page: _page);
+  //     if (!mounted) return;
+  //     setState(() {
+  //       if (_page == 1) {
+  //         _products = newProducts;
+  //       } else {
+  //         _products.addAll(newProducts);
+  //       }
+  //       _hasMore = newProducts.isNotEmpty;
+  //       _page += 1;
+  //       _isLoadingMore = false;
+  //       _errorMessage = null;
+  //     });
+  //   } catch (error) {
+  //     if (!mounted) return;
+  //     setState(() {
+  //       _isLoadingMore = false;
+  //       _errorMessage = error.toString();
+  //     });
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -16,8 +87,10 @@ class HomeScreen extends StatelessWidget {
       backgroundColor: BackGroundColor.bcgcolor,
       body: SafeArea(
         bottom: false,
+
         child: SingleChildScrollView(
-          physics: BouncingScrollPhysics(),
+          // controller: _scrollController,
+          physics: const BouncingScrollPhysics(),
           child: Padding(
             padding: ThisPadding.padding,
             child: Column(
@@ -153,6 +226,26 @@ class HomeScreen extends StatelessWidget {
                 ),
                 Gap(10.h),
                 GridviewConts(favorate: false),
+                // if (_isLoadingMore)
+                //   Padding(
+                //     padding: EdgeInsets.symmetric(vertical: 16.h),
+                //     child: const Center(
+                //       child: CircularProgressIndicator(),
+                //     ),
+                //   ),
+                // if (!_hasMore && _products.isNotEmpty)
+                //   Padding(
+                //     padding: EdgeInsets.symmetric(vertical: 10.h),
+                //     child: Center(
+                //       child: Text(
+                //         'لا توجد منتجات أكثر',
+                //         style: TextStyle(
+                //           color: Colors.grey,
+                //           fontSize: 14.sp,
+                //         ),
+                //       ),
+                //     ),
+                //   ),
                 Gap(60.h),
               ],
             ),
@@ -175,7 +268,19 @@ class AppBar extends StatelessWidget {
           padding: ThisPadding.padding,
           child: Row(
             children: [
-              Icon(Icons.notifications, size: iconsize.r),
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (BuildContext context) {
+                        return NotificationsScreen();
+                      },
+                    ),
+                  );
+                },
+                child: Icon(Icons.notifications, size: iconsize.r),
+              ),
               Spacer(),
               Text(
                 'Original Stock',
@@ -331,7 +436,6 @@ class _LisvviewSaparatedState extends State<LisvviewSaparated> {
 class GridviewConts extends StatelessWidget {
   const GridviewConts({super.key, required this.favorate});
   final bool favorate;
-
   @override
   Widget build(BuildContext context) {
     return GridView.builder(
@@ -342,12 +446,13 @@ class GridviewConts extends StatelessWidget {
         crossAxisCount: 2,
         crossAxisSpacing: 15.w,
         mainAxisSpacing: 20.h,
-        childAspectRatio: 0.550,
+        childAspectRatio: 0.520,
       ),
       itemBuilder: (context, index) {
+        final product = products[index];
         return GestureDetector(
           onTap: () {
-            context.read<ProviderProduct>().selectedproduct(products[index]);
+            context.read<ProviderProduct>().selectedproduct(product);
             Navigator.push(
               context,
               MaterialPageRoute(
@@ -374,8 +479,16 @@ class GridviewConts extends StatelessWidget {
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(11.r),
                         child: Image.asset(
-                          products[index].image,
+                          product.image,
                           fit: BoxFit.fill,
+                          // loadingBuilder: (context, child, loadingProgress) {
+                          //   if (loadingProgress == null) return child;
+                          //   return const Center(
+                          //     child: CircularProgressIndicator(strokeWidth: 2),
+                          //   );
+                          // },
+                          // errorBuilder: (context, error, stackTrace) =>
+                          //     Icon(Icons.broken_image, size: 40.r),
                         ),
                       ),
                     ),
@@ -391,8 +504,9 @@ class GridviewConts extends StatelessWidget {
                       ),
                   ],
                 ),
+                Gap(5),
                 Text(
-                  'The North Face',
+                  'Original Stock',
                   style: TextStyle(
                     fontSize: 16.sp,
                     color: Colors.grey[500],
@@ -400,7 +514,7 @@ class GridviewConts extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  products[index].name,
+                  product.name,
                   style: TextStyle(
                     fontSize: 17.7.sp,
                     color: Colors.black,
@@ -411,16 +525,17 @@ class GridviewConts extends StatelessWidget {
                 Row(
                   children: [
                     Text(
-                      products[index].price,
+                      product.price,
                       style: TextStyle(
-                        fontSize: 17.sp,
-                        fontWeight: FontWeight.w700,
+                        fontFamily: "Cairo",
+                        fontSize: 19.sp,
+                        fontWeight: FontWeight.w800,
                       ),
                     ),
                     Spacer(),
                     Icon(Icons.star, color: Colors.orange, size: 20.r),
                     Text(
-                      products[index].rating,
+                      product.rating,
                       style: TextStyle(
                         fontSize: 17.sp,
                         fontWeight: FontWeight.w700,
@@ -486,7 +601,7 @@ class ListviewProducts extends StatelessWidget {
             Gap(5.h),
             Text(
               productsData[index]["name"],
-              style: TextStyle(fontSize: 20.sp, fontWeight: FontWeight.w500),
+              style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.w700),
             ),
           ],
         );
@@ -501,31 +616,31 @@ class ListviewProducts extends StatelessWidget {
 
 List<ProductModel> products = [
   ProductModel(
-    name: "Tokyo Winter Jacket",
+    name: "Oversized Wool",
     image:
         "assets/images/686506127_18133742785562861_5213842607967549061_n.jpg",
-    price: "\$ 640",
+    price: "EGP450",
     rating: "4.8",
   ),
   ProductModel(
-    name: "Tokyo Winter Jacket",
+    name: "Red t-shirt",
     image:
         "assets/images/696679803_18133742905562861_8782142470978230832_n.jpg",
-    price: "\$ 220",
+    price: "EGP220",
     rating: "4.0",
   ),
   ProductModel(
     name: "Tokyo Winter Jacket",
     image:
         "assets/images/703796768_18133742803562861_1683141948809483400_n.jpg",
-    price: "\$ 160",
+    price: "EGP160",
     rating: "4.2",
   ),
   ProductModel(
     name: "Tokyo Winter Jacket",
     image:
         "assets/images/705968716_18133742740562861_1785207526640979999_n.jpg",
-    price: "\$ 390",
+    price: "EGP390",
     rating: "4.2",
   ),
 ];
@@ -535,7 +650,6 @@ class ProductModel {
   final String image;
   final String price;
   final String rating;
-
   ProductModel({
     required this.name,
     required this.image,
@@ -543,3 +657,37 @@ class ProductModel {
     required this.rating,
   });
 }
+
+// class ProductModel {
+//   final int id;
+//   final String name;
+//   final String image;
+//   final String price;
+//   final String? originalPrice;
+//   final bool isOffer;
+//   final String rating;
+
+//   ProductModel({
+//     required this.id,
+//     required this.name,
+//     required this.image,
+//     required this.price,
+//     required this.isOffer,
+//     required this.rating,
+//     this.originalPrice,
+//   });
+//   factory ProductModel.fromJson(Map<String, dynamic> json) {
+//     final num priceValue = json['discounted_price'] ?? json['price'] ?? 0;
+//     final bool offer = json['is_offer'] ?? false;
+
+//     return ProductModel(
+//       id: json['id'],
+//       name: json['name'],
+//       image: json['cover_image'],
+//       price: 'EGP $priceValue',
+//       originalPrice: offer ? 'EGP ${json['price']}' : null,
+//       isOffer: offer,
+//       rating: '4.5',
+//     );
+//   }
+// }

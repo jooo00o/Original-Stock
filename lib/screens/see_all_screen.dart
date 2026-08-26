@@ -26,7 +26,10 @@ class SeeAllScreen extends StatelessWidget {
                   Spacer(),
                   Text(
                     "Categories",
-                    style: TextStyle(fontSize: 20.sp, fontWeight: FontWeight.w600),
+                    style: TextStyle(
+                      fontSize: 20.sp,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                   Spacer(),
                   Icon(Icons.filter_alt, size: 30.r, color: Colors.white),

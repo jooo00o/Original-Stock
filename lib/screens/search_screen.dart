@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
-import 'package:original_stock/screens/home_screen.dart';
 import 'package:original_stock/main.dart';
-import 'package:original_stock/screens/product_details.dart';
+import 'package:original_stock/provider.dart';
+import 'package:original_stock/screens/home_screen.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:original_stock/screens/product_details.dart';
+import 'package:provider/provider.dart';
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});
@@ -85,7 +87,11 @@ class _SearchScreenState extends State<SearchScreen> {
                             ),
                           ),
                           Spacer(),
-                          Icon(Icons.filter_alt, size: 30.r, color: Colors.black),
+                          Icon(
+                            Icons.filter_alt,
+                            size: 30.r,
+                            color: Colors.black,
+                          ),
                         ],
                       ),
                       Gap(25.h),
@@ -202,10 +208,7 @@ class _SearchScreenState extends State<SearchScreen> {
                       Wrap(
                         children: List.generate(recent.length, (index) {
                           return Padding(
-                            padding: EdgeInsets.only(
-                              right: 10.w,
-                              bottom: 10.h,
-                            ),
+                            padding: EdgeInsets.only(right: 10.w, bottom: 10.h),
                             child: Container(
                               height: 45.h,
                               width: 116.5.w,
@@ -250,10 +253,7 @@ class _SearchScreenState extends State<SearchScreen> {
                       Wrap(
                         children: List.generate(recent.length, (index) {
                           return Padding(
-                            padding: EdgeInsets.only(
-                              right: 10.w,
-                              bottom: 10.h,
-                            ),
+                            padding: EdgeInsets.only(right: 10.w, bottom: 10.h),
                             child: Container(
                               height: 45.h,
                               width: 116.w,
@@ -285,113 +285,7 @@ class _SearchScreenState extends State<SearchScreen> {
                         ),
                       ),
                       Gap(20.h),
-                      SizedBox(
-                        height: 300.h,
-                        child: ListView.separated(
-                          scrollDirection: Axis.horizontal,
-                          physics: BouncingScrollPhysics(),
-                          itemBuilder: ((context, index) {
-                            return GestureDetector(
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (BuildContext context) {
-                                      return ProductDetails();
-                                    },
-                                  ),
-                                );
-                              },
-                              child: Container(
-                                height: 250.h,
-                                width: 170.w,
-                                decoration: BoxDecoration(
-                                  border: Border.all(color: Colors.grey),
-                                  borderRadius: BorderRadius.circular(12.r),
-                                ),
-                                child: Column(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Container(
-                                      width: 170.w,
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(11.r),
-                                        border: Border.all(
-                                          color: const Color(0xFFBDBDBD),
-                                        ),
-                                        color: Colors.grey[200],
-                                      ),
-                                      child: ClipRRect(
-                                        borderRadius: BorderRadius.circular(11.r),
-                                        child: Image.asset(
-                                          products[index].image,
-                                          fit: BoxFit.cover,
-                                        ),
-                                      ),
-                                    ),
-                                    Padding(
-                                      padding: EdgeInsets.symmetric(
-                                        horizontal: 8.0.w,
-                                        vertical: 4.0.h,
-                                      ),
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            products[index].name,
-                                            style: TextStyle(
-                                              fontSize: 14.sp,
-                                              color: Colors.black,
-                                              fontWeight: FontWeight.w600,
-                                            ),
-                                          ),
-                                          SizedBox(height: 4.h),
-                                          Row(
-                                            children: [
-                                              Text(
-                                                products[index].price,
-                                                style: TextStyle(
-                                                  fontSize: 18.sp,
-                                                  fontWeight: FontWeight.w700,
-                                                ),
-                                              ),
-                                              Spacer(),
-                                              Container(
-                                                height: 40.h,
-                                                width: 40.w,
-                                                decoration: BoxDecoration(
-                                                  borderRadius:
-                                                      BorderRadius.circular(40.r),
-                                                  color: Colors.black,
-                                                ),
-                                                child: Center(
-                                                  child: Image.asset(
-                                                    "assets/icons/shopping-bag.png",
-                                                    height: iconsDimentions,
-                                                    width: iconsDimentions,
-                                                    color: Colors.white,
-                                                  ),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            );
-                          }),
-                          separatorBuilder: ((context, index) {
-                            return Gap(10.w);
-                          }),
-                          itemCount: products.length,
-                        ),
-                      ),
+                      LastWidget(),
                     ],
                   ),
                 ),
@@ -399,6 +293,120 @@ class _SearchScreenState extends State<SearchScreen> {
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+class LastWidget extends StatefulWidget {
+  const LastWidget({super.key});
+
+  @override
+  State<LastWidget> createState() => _LastWidgetState();
+}
+
+class _LastWidgetState extends State<LastWidget> {
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 300.h,
+      child: ListView.separated(
+        scrollDirection: Axis.horizontal,
+        physics: BouncingScrollPhysics(),
+        itemBuilder: ((context, index) {
+          final product = products[index];
+          return GestureDetector(
+            onTap: () {
+              context.read<ProviderProduct>().selectedproduct(product);
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (BuildContext context) {
+                    return ProductDetails();
+                  },
+                ),
+              );
+            },
+            child: Container(
+              height: 250.h,
+              width: 170.w,
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.grey),
+                borderRadius: BorderRadius.circular(12.r),
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    width: 170.w,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(11.r),
+                      border: Border.all(color: const Color(0xFFBDBDBD)),
+                      color: Colors.grey[200],
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(11.r),
+                      child: Image.asset(product.image, fit: BoxFit.cover),
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 8.0.w,
+                      vertical: 4.0.h,
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          product.name,
+                          style: TextStyle(
+                            fontSize: 14.sp,
+                            color: Colors.black,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        SizedBox(height: 4.h),
+                        Row(
+                          children: [
+                            Text(
+                              product.price,
+                              style: TextStyle(
+                                fontSize: 18.sp,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                            Spacer(),
+                            Container(
+                              height: 40.h,
+                              width: 40.w,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(40.r),
+                                color: Colors.black,
+                              ),
+                              child: Center(
+                                child: Image.asset(
+                                  "assets/icons/shopping-bag.png",
+                                  height: iconsDimentions,
+                                  width: iconsDimentions,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        }),
+        separatorBuilder: ((context, index) {
+          return Gap(10.w);
+        }),
+        itemCount: products.length,
       ),
     );
   }
