@@ -87,7 +87,6 @@ class _HomeScreenState extends State<HomeScreen> {
       backgroundColor: BackGroundColor.bcgcolor,
       body: SafeArea(
         bottom: false,
-
         child: SingleChildScrollView(
           // controller: _scrollController,
           physics: const BouncingScrollPhysics(),

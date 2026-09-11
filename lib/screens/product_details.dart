@@ -211,9 +211,9 @@ class _ProductDetailsState extends State<ProductDetails> {
                               .isProductInWishlist(product);
                           return GestureDetector(
                             onTap: () {
-                              context
-                                  .read<ProviderProduct>()
-                                  .toggleWishlist(product);
+                              context.read<ProviderProduct>().toggleWishlist(
+                                product,
+                              );
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
                                   content: Text(

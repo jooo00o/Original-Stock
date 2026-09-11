@@ -16,7 +16,7 @@ class CartScreen extends StatelessWidget {
     final color = Colors.grey[800];
     final cartProvider = context.watch<ProviderProduct>();
     final cartItems = cartProvider.cartItems;
-
+    
     return Scaffold(
       backgroundColor: Colors.white,
       bottomNavigationBar: cartItems.isEmpty
