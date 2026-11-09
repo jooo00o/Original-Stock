@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:original_stock/core/money.dart';
 import 'package:original_stock/screens/home_screen.dart';
 
 class CartItem {
@@ -14,10 +15,7 @@ class CartItem {
     this.quantity = 1,
   });
 
-  double get unitPrice {
-    final cleaned = product.price.replaceAll(RegExp(r'[^0-9.]'), '');
-    return double.tryParse(cleaned) ?? 0.0;
-  }
+  double get unitPrice => parsePrice(product.price);
 
   double get totalPrice => unitPrice * quantity;
 }
@@ -31,17 +29,20 @@ class ProviderProduct extends ChangeNotifier {
   List<ProductModel> get wishlist => List.unmodifiable(_wishlist);
   int get wishlistCount => _wishlist.length;
 
+  bool _isSameProduct(ProductModel a, ProductModel b) {
+    if (a.id.isNotEmpty && b.id.isNotEmpty) {
+      return a.id == b.id;
+    }
+    return a.name == b.name && a.image == b.image;
+  }
+
   bool isProductInWishlist(ProductModel product) {
-    return _wishlist.any(
-      (p) => p.name == product.name && p.image == product.image,
-    );
+    return _wishlist.any((p) => _isSameProduct(p, product));
   }
 
   void toggleWishlist(ProductModel product) {
     if (isProductInWishlist(product)) {
-      _wishlist.removeWhere(
-        (p) => p.name == product.name && p.image == product.image,
-      );
+      _wishlist.removeWhere((p) => _isSameProduct(p, product));
     } else {
       _wishlist.add(product);
     }
@@ -56,7 +57,7 @@ class ProviderProduct extends ChangeNotifier {
   void addToCart(ProductModel product, String size, String color) {
     final existingIndex = _cartItems.indexWhere(
       (item) =>
-          item.product.name == product.name &&
+          _isSameProduct(item.product, product) &&
           item.size == size &&
           item.color == color,
     );
@@ -64,12 +65,7 @@ class ProviderProduct extends ChangeNotifier {
       _cartItems[existingIndex].quantity += 1;
     } else {
       _cartItems.add(
-        CartItem(
-          product: product,
-          size: size,
-          color: color,
-          quantity: 1,
-        ),
+        CartItem(product: product, size: size, color: color, quantity: 1),
       );
     }
     notifyListeners();
@@ -103,14 +99,11 @@ class ProviderProduct extends ChangeNotifier {
     return _cartItems.fold(0.0, (sum, item) => sum + item.totalPrice);
   }
 
-  double get tax => _cartItems.isEmpty ? 0.0 : 4.50;
-
   double get deliveryCharge => 0.0;
 
-  double get totalPayment => subtotal + tax + deliveryCharge;
+  double get totalPayment => subtotal + deliveryCharge;
 
   int get totalItemCount {
     return _cartItems.fold(0, (sum, item) => sum + item.quantity);
   }
 }
-

@@ -1,337 +1,179 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
-import 'package:original_stock/main.dart';
-import 'package:original_stock/screens/home_screen.dart' hide AppBar;
+import 'package:original_stock/core/app_theme.dart';
+import 'package:original_stock/widgets/circular_icon_button.dart';
 
-class NotificationsScreen extends StatelessWidget {
+class NotificationItem {
+  final String title;
+  final String message;
+  final String time;
+  final IconData icon;
+  final bool isUnread;
+
+  const NotificationItem({
+    required this.title,
+    required this.message,
+    required this.time,
+    required this.icon,
+    this.isUnread = false,
+  });
+}
+
+class NotificationsScreen extends StatefulWidget {
   const NotificationsScreen({super.key});
+
+  @override
+  State<NotificationsScreen> createState() => _NotificationsScreenState();
+}
+
+class _NotificationsScreenState extends State<NotificationsScreen> {
+  final List<NotificationItem> _notifications = [
+    const NotificationItem(
+      title: "Order shipped",
+      message: "Your order #OS-10293 has been shipped via express courier.",
+      time: "2h ago",
+      icon: Icons.local_shipping_outlined,
+      isUnread: true,
+    ),
+    const NotificationItem(
+      title: "Super Sale is Live",
+      message: "Get up to 50% off on winter tailoring & seasonal jackets.",
+      time: "5h ago",
+      icon: Icons.local_offer_outlined,
+      isUnread: true,
+    ),
+    const NotificationItem(
+      title: "New collection drop",
+      message: "The Autumn Tailoring drop is live now. Discover curated pieces.",
+      time: "1d ago",
+      icon: Icons.auto_awesome_outlined,
+      isUnread: false,
+    ),
+    const NotificationItem(
+      title: "Order delivered",
+      message: "Order #OS-10188 has been successfully delivered. Enjoy your wear!",
+      time: "3d ago",
+      icon: Icons.check_circle_outline_rounded,
+      isUnread: false,
+    ),
+  ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: backgroundColor,
-        title: Text(
-          'Notifications',
-          style: TextStyle(fontSize: 24.sp, fontWeight: FontWeight.bold),
-        ),
-        centerTitle: true,
-      ),
-      backgroundColor: backgroundColor,
-      body: Padding(
-        padding: ThisPadding.padding,
+      backgroundColor: AppColors.background,
+      body: SafeArea(
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Gap(16.h),
-            Container(
-              width: double.infinity,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(25),
-                border: Border.all(color: Colors.grey[300]!),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  vertical: 20,
-                  horizontal: 16,
-                ),
-                child: Row(
-                  children: [
-                    Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(25),
-                        border: Border.all(color: Colors.grey[300]!),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(10),
-                        child: Image.asset(
-                          height: 25.h,
-                          width: 25.w,
-                          "assets/icons/notification.png",
-                          color: Colors.black,
-                        ),
-                      ),
-                    ),
-                    Gap(16.w),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Text(
-                                "Order shipped",
-                                style: TextStyle(
-                                  fontSize: 18.sp,
-                                  fontWeight: FontWeight.w700,
-                                ),
-                              ),
-                              Spacer(),
-                              Text(
-                                "2h ago",
-                                style: TextStyle(
-                                  fontSize: 14.sp,
-                                  color: Colors.grey.shade700,
-                                  fontWeight: FontWeight.w400,
-                                ),
-                              ),
-                              Gap(12.w),
-                              Container(
-                                height: 9,
-                                width: 9,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(40),
-                                  color: Colors.black,
-                                ),
-                              ),
-                            ],
-                          ),
-                          Gap(5.h),
-                          Text(
-                            "Your order #OS-10293 has been shipped.",
-                            style: TextStyle(
-                              wordSpacing: -1,
-                              fontSize: 13.sp,
-                              color: Colors.grey[700]!,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
+            // Top Navigation Row
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 12.h),
+              child: Row(
+                children: [
+                  CircularIconButton(
+                    iconData: Icons.arrow_back_ios_new_rounded,
+                    onTap: () => Navigator.pop(context),
+                  ),
+                  const Spacer(),
+                  Text(
+                    'Notifications',
+                    style: AppText.titleMedium(color: AppColors.text),
+                  ),
+                  const Spacer(),
+                  SizedBox(width: 44.r),
+                ],
               ),
             ),
-            Gap(10.h),
-            Container(
-              width: double.infinity,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(25),
-                border: Border.all(color: Colors.grey[300]!),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  vertical: 20,
-                  horizontal: 16,
-                ),
-                child: Row(
-                  children: [
-                    Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(25),
-                        border: Border.all(color: Colors.grey[300]!),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(10),
-                        child: Image.asset(
-                          height: 25.h,
-                          width: 25.w,
-                          "assets/icons/notification.png",
-                          color: Colors.black,
-                        ),
+            Gap(8.h),
+
+            // Notifications List
+            Expanded(
+              child: ListView.separated(
+                physics: const BouncingScrollPhysics(),
+                padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 8.h),
+                itemCount: _notifications.length,
+                separatorBuilder: (context, index) => Gap(12.h),
+                itemBuilder: (context, index) {
+                  final notif = _notifications[index];
+
+                  return Container(
+                    padding: EdgeInsets.all(16.r),
+                    decoration: BoxDecoration(
+                      color: AppColors.surface,
+                      borderRadius: BorderRadius.circular(AppRadius.card),
+                      border: Border.all(
+                        color: notif.isUnread
+                            ? AppColors.primaryLight
+                            : AppColors.hairline,
+                        width: 1,
                       ),
                     ),
-                    Gap(16.w),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Per-type Icon in circular 44 with soft grey fill
+                        CircularIconButton(
+                          size: 44.r,
+                          backgroundColor: AppColors.white,
+                          iconData: notif.icon,
+                          iconColor: AppColors.primary,
+                          iconSize: 22.r,
+                        ),
+                        Gap(14.w),
+
+                        // Notification Details
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
-                                "New collection",
-                                style: TextStyle(
-                                  fontSize: 18.sp,
-                                  fontWeight: FontWeight.w700,
-                                ),
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: Text(
+                                      notif.title,
+                                      style: TextStyle(
+                                        fontFamily: AppText.fontFamily,
+                                        fontSize: 15.sp,
+                                        fontWeight: FontWeight.w700,
+                                        color: AppColors.text,
+                                      ),
+                                    ),
+                                  ),
+                                  Text(
+                                    notif.time,
+                                    style: AppText.caption(
+                                      color: AppColors.textSecondary,
+                                    ),
+                                  ),
+                                  // Unread dot in purple
+                                  if (notif.isUnread) ...[
+                                    Gap(8.w),
+                                    Container(
+                                      height: 8.r,
+                                      width: 8.r,
+                                      decoration: const BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        color: AppColors.primary,
+                                      ),
+                                    ),
+                                  ],
+                                ],
                               ),
-                              Spacer(),
+                              Gap(4.h),
                               Text(
-                                "1h ago",
-                                style: TextStyle(
-                                  fontSize: 14.sp,
-                                  color: Colors.grey.shade700,
-                                  fontWeight: FontWeight.w400,
-                                ),
-                              ),
-                              Gap(12.w),
-                              Container(
-                                height: 9,
-                                width: 9,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(40),
-                                  color: Colors.black,
+                                notif.message,
+                                style: AppText.bodySmall(
+                                  color: AppColors.textSecondary,
                                 ),
                               ),
                             ],
                           ),
-                          Gap(5.h),
-                          Text(
-                            "The Autumn Tailoring drop is live now.",
-                            style: TextStyle(
-                              wordSpacing: -1,
-                              fontSize: 13.sp,
-                              color: Colors.grey[700]!,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            Gap(10.h),
-            Container(
-              width: double.infinity,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(25),
-                border: Border.all(color: Colors.grey[300]!),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  vertical: 20,
-                  horizontal: 16,
-                ),
-                child: Row(
-                  children: [
-                    Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(25),
-                        border: Border.all(color: Colors.grey[300]!),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(10),
-                        child: Image.asset(
-                          height: 25.h,
-                          width: 25.w,
-                          "assets/icons/notification.png",
-                          color: Colors.black,
                         ),
-                      ),
+                      ],
                     ),
-                    Gap(16.w),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Text(
-                                "Price drop",
-                                style: TextStyle(
-                                  fontSize: 18.sp,
-                                  fontWeight: FontWeight.w700,
-                                ),
-                              ),
-                              Spacer(),
-                              Text(
-                                "3d ago",
-                                style: TextStyle(
-                                  fontSize: 14.sp,
-                                  color: Colors.grey.shade700,
-                                  fontWeight: FontWeight.w400,
-                                ),
-                              ),
-                            ],
-                          ),
-                          Gap(5.h),
-                          Text(
-                            "Cashmere Knit Sweater is now \$189.",
-                            style: TextStyle(
-                              wordSpacing: -1,
-                              fontSize: 13.sp,
-                              color: Colors.grey[700]!,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            Gap(10.h),
-            Container(
-              width: double.infinity,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(25),
-                border: Border.all(color: Colors.grey[300]!),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  vertical: 20,
-                  horizontal: 16,
-                ),
-                child: Row(
-                  children: [
-                    Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(25),
-                        border: Border.all(color: Colors.grey[300]!),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(10),
-                        child: Image.asset(
-                          height: 25.h,
-                          width: 25.w,
-                          "assets/icons/notification.png",
-                          color: Colors.black,
-                        ),
-                      ),
-                    ),
-                    Gap(16.w),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Text(
-                                "Order delivered",
-                                style: TextStyle(
-                                  fontSize: 18.sp,
-                                  fontWeight: FontWeight.w700,
-                                ),
-                              ),
-                              Spacer(),
-                              Text(
-                                "1w ago",
-                                style: TextStyle(
-                                  fontSize: 14.sp,
-                                  color: Colors.grey.shade700,
-                                  fontWeight: FontWeight.w400,
-                                ),
-                              ),
-                            ],
-                          ),
-                          Gap(5.h),
-                          Text(
-                            "Your order #OS-10250 was delivered.",
-                            style: TextStyle(
-                              wordSpacing: -1,
-                              fontSize: 13.sp,
-                              color: Colors.grey[700]!,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
+                  );
+                },
               ),
             ),
           ],

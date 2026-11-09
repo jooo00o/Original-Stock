@@ -1,10 +1,12 @@
-import 'package:original_stock/onboarding/first_onboarding_screen.dart';
-import 'package:original_stock/onboarding/third_onboarding_screen.dart';
-import 'package:original_stock/onboarding/second_onboarding_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:gap/gap.dart';
-import 'package:original_stock/main.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:gap/gap.dart';
+import 'package:original_stock/core/app_theme.dart';
+import 'package:original_stock/main.dart';
+import 'package:original_stock/onboarding/first_onboarding_screen.dart';
+import 'package:original_stock/onboarding/second_onboarding_screen.dart';
+import 'package:original_stock/onboarding/third_onboarding_screen.dart';
+import 'package:original_stock/widgets/pill_button.dart';
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
@@ -15,109 +17,98 @@ class OnboardingScreen extends StatefulWidget {
 
 class _OnboardingScreenState extends State<OnboardingScreen> {
   int selecredOnboard = 0;
-  PageController pageController = PageController();
+  final PageController pageController = PageController();
+
+  void _finishOnboarding() {
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => const MainScreen()),
+    );
+  }
+
+  @override
+  void dispose() {
+    pageController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.background,
       body: SafeArea(
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 20.w),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
+              // Skip button
               TextButton(
-                onPressed: () {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(builder: (context) => const MainScreen()),
-                  );
-                },
+                onPressed: _finishOnboarding,
                 child: Text(
                   'Skip',
-                  style: TextStyle(color: Colors.black, fontSize: 18.sp),
+                  style: TextStyle(
+                    fontFamily: AppText.fontFamily,
+                    color: AppColors.textSecondary,
+                    fontSize: 16.sp,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
               ),
+
+              // Page View
               Expanded(
                 child: PageView(
                   controller: pageController,
+                  physics: const BouncingScrollPhysics(),
                   onPageChanged: (value) {
                     setState(() {
                       selecredOnboard = value;
                     });
                   },
-                  children: [
-                    const FirstOnboardingScreen(),
-                    const SecondOnboardingScreen(),
-                    const ThirdOnboardingScreen(),
+                  children: const [
+                    FirstOnboardingScreen(),
+                    SecondOnboardingScreen(),
+                    ThirdOnboardingScreen(),
                   ],
                 ),
               ),
+
+              // Indicators
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  CustomIndicator(active: selecredOnboard == 0),
-                  Gap(6.w),
-                  CustomIndicator(active: selecredOnboard == 1),
-                  Gap(6.w),
-                  CustomIndicator(active: selecredOnboard == 2),
-                ],
+                children: List.generate(3, (index) {
+                  final isActive = selecredOnboard == index;
+                  return AnimatedContainer(
+                    duration: const Duration(milliseconds: 200),
+                    margin: EdgeInsets.symmetric(horizontal: 4.w),
+                    height: 6.h,
+                    width: isActive ? 24.w : 6.w,
+                    decoration: BoxDecoration(
+                      color: isActive ? AppColors.primary : AppColors.hairline,
+                      borderRadius: BorderRadius.circular(AppRadius.pill),
+                    ),
+                  );
+                }),
               ),
-              Gap(50.h),
-              GestureDetector(
-                onTap: () {
+              Gap(32.h),
+
+              // Next / Get Started button (Pill height 54, purple fill)
+              PillButton(
+                label: selecredOnboard == 2 ? 'Get Started' : 'Next',
+                onPressed: () {
                   if (selecredOnboard == 2) {
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const MainScreen(),
-                      ),
-                    );
+                    _finishOnboarding();
                   } else {
                     pageController.animateToPage(
                       selecredOnboard + 1,
-                      duration: const Duration(milliseconds: 250),
-                      curve: Curves.linear,
+                      duration: const Duration(milliseconds: 300),
+                      curve: Curves.easeInOutCubic,
                     );
                   }
                 },
-                child: Container(
-                  height: 50.h,
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    color: Colors.black,
-                    borderRadius: BorderRadius.circular(30.r),
-                  ),
-                  child: Padding(
-                    padding: EdgeInsets.only(
-                      left: 10.w,
-                      right: 10.w,
-                      top: 8.h,
-                      bottom: 8.h,
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          'Next',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontFamily: "Cairo",
-                            fontSize: 20.sp,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        Gap(4.w),
-                        Icon(
-                          Icons.arrow_forward_ios,
-                          color: Colors.white,
-                          size: 20.r,
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
               ),
+              Gap(20.h),
             ],
           ),
         ),
@@ -126,19 +117,20 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   }
 }
 
+// Preserved for backwards compatibility
 class CustomIndicator extends StatelessWidget {
-  const CustomIndicator({super.key, required this.active});
   final bool active;
+  const CustomIndicator({super.key, required this.active});
 
   @override
   Widget build(BuildContext context) {
     return AnimatedContainer(
-      duration: Duration(milliseconds: 250),
-      height: 10.h,
-      width: active ? 30.w : 10.w,
+      duration: const Duration(milliseconds: 200),
+      height: 6.h,
+      width: active ? 24.w : 6.w,
       decoration: BoxDecoration(
-        color: active ? Colors.black : Colors.grey[300],
-        borderRadius: BorderRadius.circular(10.r),
+        color: active ? AppColors.primary : AppColors.hairline,
+        borderRadius: BorderRadius.circular(AppRadius.pill),
       ),
     );
   }

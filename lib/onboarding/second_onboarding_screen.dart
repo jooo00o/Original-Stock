@@ -1,49 +1,44 @@
 import 'package:flutter/material.dart';
-import 'package:gap/gap.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:gap/gap.dart';
+import 'package:original_stock/core/app_theme.dart';
 
 class SecondOnboardingScreen extends StatelessWidget {
   const SecondOnboardingScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Gap(15.h),
-            ClipRRect(
-              borderRadius: BorderRadius.circular(30.r),
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Expanded(
+          child: Padding(
+            padding: EdgeInsets.symmetric(vertical: 8.h),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(AppRadius.banner),
               child: Image.asset(
-                fit: BoxFit.fitHeight,
                 'assets/images/photo-1593030761757-71fae45fa0e7.avif',
-                height: 390.h,
+                fit: BoxFit.cover,
               ),
             ),
-            Gap(35.h),
-            Text(
-              'Quiet luxury, every day',
-              style: TextStyle(
-                fontSize: 29.sp,
-                fontWeight: FontWeight.w800,
-                color: Colors.black,
-              ),
-            ),
-            Gap(8.h),
-            Text(
-              "Premium materials, considered cuts, timeless silhouettes.",
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 15.5.sp,
-                fontFamily: "Cairo",
-                color: Colors.grey[600],
-              ),
-            ),
-          ],
+          ),
         ),
-      ),
+        Gap(14.h),
+        Text(
+          'Quiet Luxury, Everyday',
+          style: AppText.titleLarge(fontSize: 22.sp),
+        ),
+        Gap(6.h),
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: 16.w),
+          child: Text(
+            'Premium Egyptian materials, considered cuts, and architectural silhouettes.',
+            textAlign: TextAlign.center,
+            style: AppText.bodyMedium(color: AppColors.textSecondary),
+          ),
+        ),
+        Gap(14.h),
+      ],
     );
   }
 }

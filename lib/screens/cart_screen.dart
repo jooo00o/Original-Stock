@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
+import 'package:original_stock/core/app_theme.dart';
+import 'package:original_stock/core/money.dart';
+import 'package:original_stock/main.dart';
 import 'package:original_stock/provider.dart';
 import 'package:original_stock/screens/checkout_screen.dart';
-import 'package:original_stock/screens/home_screen.dart';
+import 'package:original_stock/widgets/circular_icon_button.dart';
+import 'package:original_stock/widgets/pill_button.dart';
+import 'package:original_stock/widgets/skeletons.dart';
 import 'package:provider/provider.dart';
 
 class CartScreen extends StatelessWidget {
@@ -11,451 +16,413 @@ class CartScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final double fontsize = 18.sp;
-    final FontWeight fontweight = FontWeight.w600;
-    final color = Colors.grey[800];
     final cartProvider = context.watch<ProviderProduct>();
     final cartItems = cartProvider.cartItems;
-    
+    final isRootTab = !Navigator.canPop(context);
+
     return Scaffold(
-      backgroundColor: Colors.white,
-      bottomNavigationBar: cartItems.isEmpty
-          ? null
-          : Padding(
-              padding: EdgeInsets.only(
-                bottom: Navigator.canPop(context) ? 20.h : 100.h,
-                right: 20.w,
-                left: 20.w,
-                top: 10.h,
-              ),
-              child: SizedBox(
-                height: 250.h,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      "Order summary",
-                      style: TextStyle(
-                        fontSize: 20.sp,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    Row(
-                      children: [
-                        Text(
-                          "Total Items (${cartProvider.totalItemCount})",
-                          style: TextStyle(
-                            fontSize: fontsize,
-                            fontWeight: fontweight,
-                            color: color,
-                          ),
-                        ),
-                        const Spacer(),
-                        Text(
-                          "\$${cartProvider.subtotal.toStringAsFixed(2)}",
-                          style: TextStyle(
-                            fontSize: fontsize,
-                            fontWeight: fontweight,
-                            color: color,
-                          ),
-                        ),
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        Text(
-                          "Tax",
-                          style: TextStyle(
-                            fontSize: fontsize,
-                            fontWeight: fontweight,
-                            color: color,
-                          ),
-                        ),
-                        const Spacer(),
-                        Text(
-                          "\$${cartProvider.tax.toStringAsFixed(2)}",
-                          style: TextStyle(
-                            fontSize: fontsize,
-                            fontWeight: fontweight,
-                            color: color,
-                          ),
-                        ),
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        Text(
-                          "Delivery Charge",
-                          style: TextStyle(
-                            fontSize: fontsize,
-                            fontWeight: fontweight,
-                            color: color,
-                          ),
-                        ),
-                        const Spacer(),
-                        Text(
-                          "\$${cartProvider.deliveryCharge.toStringAsFixed(2)}",
-                          style: TextStyle(
-                            fontSize: fontsize,
-                            fontWeight: fontweight,
-                            color: color,
-                          ),
-                        ),
-                      ],
-                    ),
-                    Gap(5.h),
-                    const Divider(),
-                    Gap(5.h),
-                    Row(
-                      children: [
-                        Text(
-                          "Total Payment:",
-                          style: TextStyle(
-                            fontSize: fontsize + 2.sp,
-                            fontWeight: fontweight,
-                            color: Colors.black,
-                          ),
-                        ),
-                        const Spacer(),
-                        Text(
-                          "\$${cartProvider.totalPayment.toStringAsFixed(2)}",
-                          style: TextStyle(
-                            fontSize: fontsize + 2.sp,
-                            fontWeight: fontweight,
-                            color: Colors.black,
-                          ),
-                        ),
-                      ],
-                    ),
-                    Gap(10.h),
+      backgroundColor: AppColors.background,
+      body: SafeArea(
+        bottom: false,
+        child: Column(
+          children: [
+            // Top Navigation / Header
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 12.h),
+              child: Row(
+                children: [
+                  if (!isRootTab)
+                    CircularIconButton(
+                      iconData: Icons.arrow_back_ios_new_rounded,
+                      onTap: () => Navigator.pop(context),
+                    )
+                  else
+                    SizedBox(width: 44.r),
+                  const Spacer(),
+                  Text(
+                    'Shopping Bag',
+                    style: AppText.titleMedium(color: AppColors.text),
+                  ),
+                  const Spacer(),
+                  if (cartItems.isNotEmpty)
                     GestureDetector(
                       onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (BuildContext context) {
-                              return const CheckoutScreen();
-                            },
+                        showDialog(
+                          context: context,
+                          builder: (ctx) => AlertDialog(
+                            backgroundColor: AppColors.background,
+                            shape: RoundedRectangleBorder(
+                              borderRadius:
+                                  BorderRadius.circular(AppRadius.card),
+                            ),
+                            title: Text(
+                              'Clear Bag?',
+                              style: AppText.titleSmall(),
+                            ),
+                            content: Text(
+                              'Are you sure you want to remove all items from your bag?',
+                              style: AppText.bodyMedium(
+                                color: AppColors.textSecondary,
+                              ),
+                            ),
+                            actions: [
+                              TextButton(
+                                onPressed: () => Navigator.pop(ctx),
+                                child: Text(
+                                  'Cancel',
+                                  style: AppText.bodyMedium(),
+                                ),
+                              ),
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.pop(ctx);
+                                  cartProvider.clearCart();
+                                },
+                                child: Text(
+                                  'Clear',
+                                  style: AppText.bodyMedium(
+                                    color: AppColors.error,
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                         );
                       },
-                      child: Container(
-                        height: 65.h,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(40.r),
-                          color: Colors.black,
-                        ),
-                        child: Center(
-                          child: Text(
-                            "Checkout . \$${cartProvider.totalPayment.toStringAsFixed(2)}",
-                            style: TextStyle(
-                              fontSize: 20.sp,
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
+                      child: Text(
+                        'Clear',
+                        style: TextStyle(
+                          fontFamily: AppText.fontFamily,
+                          fontSize: 13.sp,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.error,
                         ),
                       ),
+                    )
+                  else
+                    SizedBox(width: 44.r),
+                ],
+              ),
+            ),
+
+            // Main Content
+            Expanded(
+              child: cartItems.isEmpty
+                  ? Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Container(
+                            height: 90.r,
+                            width: 90.r,
+                            decoration: const BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: AppColors.surface,
+                            ),
+                            child: Icon(
+                              Icons.shopping_bag_outlined,
+                              size: 42.r,
+                              color: AppColors.textSecondary,
+                            ),
+                          ),
+                          Gap(20.h),
+                          Text(
+                            'Your bag is empty',
+                            style: AppText.titleMedium(color: AppColors.text),
+                          ),
+                          Gap(6.h),
+                          Text(
+                            'Explore our new arrivals and add your favorite pieces.',
+                            textAlign: TextAlign.center,
+                            style: AppText.bodyMedium(
+                              color: AppColors.textSecondary,
+                            ),
+                          ),
+                          Gap(28.h),
+                          SizedBox(
+                            width: 180.w,
+                            child: PillButton(
+                              label: 'Explore Fashion',
+                              height: 48.h,
+                              onPressed: () {
+                                if (Navigator.canPop(context)) {
+                                  Navigator.pop(context);
+                                } else {
+                                  mainNavController.goToTab(0);
+                                }
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                    )
+                  : ListView.separated(
+                      physics: const BouncingScrollPhysics(),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 20.w,
+                        vertical: 10.h,
+                      ),
+                      itemCount: cartItems.length,
+                      separatorBuilder: (context, index) => Gap(14.h),
+                      itemBuilder: (context, index) {
+                        final item = cartItems[index];
+                        final product = item.product;
+                        final dpr =
+                            MediaQuery.maybeDevicePixelRatioOf(context) ?? 2.5;
+                        final int thumbCacheWidth =
+                            (80.r * dpr).round().clamp(60, 600);
+
+                        return RepaintBoundary(
+                          child: Container(
+                            padding: EdgeInsets.all(12.r),
+                            decoration: BoxDecoration(
+                              color: AppColors.surface,
+                              borderRadius:
+                                  BorderRadius.circular(AppRadius.card),
+                              border: Border.all(
+                                color: AppColors.hairline,
+                                width: 1,
+                              ),
+                            ),
+                            child: Row(
+                              children: [
+                                // Product Thumbnail
+                                ClipRRect(
+                                  borderRadius:
+                                      BorderRadius.circular(AppRadius.image),
+                                  child: SizedBox(
+                                    height: 90.r,
+                                    width: 80.r,
+                                    child: product.image.startsWith('http')
+                                        ? Image.network(
+                                            product.image,
+                                            fit: BoxFit.cover,
+                                            cacheWidth: thumbCacheWidth,
+                                            loadingBuilder: (
+                                              context,
+                                              child,
+                                              loadingProgress,
+                                            ) {
+                                              if (loadingProgress == null) {
+                                                return child;
+                                              }
+                                              return SkeletonBox(
+                                                height: 90.r,
+                                                width: 80.r,
+                                                radius: AppRadius.image,
+                                              );
+                                            },
+                                            errorBuilder:
+                                                (context, error, stackTrace) =>
+                                                    const Center(
+                                                      child: Icon(
+                                                        Icons.broken_image,
+                                                        color: AppColors
+                                                            .textSecondary,
+                                                      ),
+                                                    ),
+                                          )
+                                        : Image.asset(
+                                            product.image,
+                                            fit: BoxFit.cover,
+                                            cacheWidth: thumbCacheWidth,
+                                            errorBuilder:
+                                                (context, error, stackTrace) =>
+                                                    const Center(
+                                                      child: Icon(
+                                                        Icons.broken_image,
+                                                        color: AppColors
+                                                            .textSecondary,
+                                                      ),
+                                                    ),
+                                          ),
+                                  ),
+                                ),
+                              Gap(14.w),
+
+                              // Product Information
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        Expanded(
+                                          child: Text(
+                                            product.name,
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                            style: AppText.titleSmall(
+                                              color: AppColors.text,
+                                            ),
+                                          ),
+                                        ),
+                                        GestureDetector(
+                                          onTap: () {
+                                            cartProvider.removeFromCart(item);
+                                          },
+                                          child: Icon(
+                                            Icons.close_rounded,
+                                            size: 18.r,
+                                            color: AppColors.textSecondary,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    Gap(4.h),
+                                    Text(
+                                      'Size: ${item.size} • Color: ${item.color}',
+                                      style: AppText.caption(
+                                        color: AppColors.textSecondary,
+                                      ),
+                                    ),
+                                    Gap(10.h),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(
+                                          egp(item.totalPrice),
+                                          style: TextStyle(
+                                            fontFamily: AppText.fontFamily,
+                                            fontSize: 16.sp,
+                                            fontWeight: FontWeight.w700,
+                                            color: AppColors.primary,
+                                          ),
+                                        ),
+                                        // Quantity Stepper
+                                        Container(
+                                          decoration: BoxDecoration(
+                                            color: AppColors.white,
+                                            borderRadius:
+                                                BorderRadius.circular(
+                                              AppRadius.pill,
+                                            ),
+                                            border: Border.all(
+                                              color: AppColors.hairline,
+                                              width: 1,
+                                            ),
+                                          ),
+                                          child: Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              _stepperButton(
+                                                icon: Icons.remove_rounded,
+                                                onTap: () => cartProvider
+                                                    .decrementQuantity(item),
+                                              ),
+                                              Padding(
+                                                padding: EdgeInsets.symmetric(
+                                                  horizontal: 10.w,
+                                                ),
+                                                child: Text(
+                                                  '${item.quantity}',
+                                                  style: TextStyle(
+                                                    fontFamily:
+                                                        AppText.fontFamily,
+                                                    fontSize: 13.sp,
+                                                    fontWeight: FontWeight.w700,
+                                                    color: AppColors.text,
+                                                  ),
+                                                ),
+                                              ),
+                                              _stepperButton(
+                                                icon: Icons.add_rounded,
+                                                onTap: () => cartProvider
+                                                    .incrementQuantity(item),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                    ),
+            ),
+
+            // Order Summary & Checkout Action Sheet
+            if (cartItems.isNotEmpty)
+              Container(
+                padding: EdgeInsets.only(
+                  left: 20.w,
+                  right: 20.w,
+                  top: 16.h,
+                  bottom: isRootTab ? AppSpacing.navClearance : 24.h,
+                ),
+                decoration: BoxDecoration(
+                  color: AppColors.background,
+                  border: const Border(
+                    top: BorderSide(color: AppColors.hairline, width: 1),
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.04),
+                      blurRadius: 10,
+                      offset: const Offset(0, -3),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'Total (${cartProvider.totalItemCount} items)',
+                          style: AppText.bodyMedium(
+                            color: AppColors.textSecondary,
+                          ),
+                        ),
+                        Text(
+                          egp(cartProvider.subtotal),
+                          style: TextStyle(
+                            fontFamily: AppText.fontFamily,
+                            fontSize: 18.sp,
+                            fontWeight: FontWeight.w700,
+                            color: AppColors.text,
+                          ),
+                        ),
+                      ],
+                    ),
+                    Gap(14.h),
+                    PillButton(
+                      label: 'Proceed to Checkout',
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const CheckoutScreen(),
+                          ),
+                        );
+                      },
                     ),
                   ],
                 ),
               ),
-            ),
-      body: SafeArea(
-        bottom: false,
-        child: Padding(
-          padding: ThisPadding.padding,
-          child: Column(
-            children: [
-              Row(
-                children: [
-                  Navigator.canPop(context)
-                      ? GestureDetector(
-                          onTap: () {
-                            Navigator.pop(context);
-                          },
-                          child: Icon(Icons.arrow_back_ios_new, size: 24.r),
-                        )
-                      : Icon(Icons.favorite, color: Colors.white, size: 24.r),
-                  const Spacer(),
-                  Text(
-                    'Cart',
-                    style: TextStyle(
-                      fontSize: 24.sp,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const Spacer(),
-                  Icon(Icons.favorite, color: Colors.white, size: 24.r),
-                ],
-              ),
-              Gap(30.h),
-              Expanded(
-                child: cartItems.isEmpty
-                    ? Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.shopping_bag_outlined,
-                              size: 80.r,
-                              color: Colors.grey[400],
-                            ),
-                            Gap(15.h),
-                            Text(
-                              'Your cart is empty',
-                              style: TextStyle(
-                                fontSize: 20.sp,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.grey[700],
-                              ),
-                            ),
-                            Gap(5.h),
-                            Text(
-                              'Add items to start shopping',
-                              style: TextStyle(
-                                fontSize: 16.sp,
-                                color: Colors.grey[500],
-                              ),
-                            ),
-                          ],
-                        ),
-                      )
-                    : ListView.separated(
-                        physics: const BouncingScrollPhysics(),
-                        itemBuilder: (context, index) {
-                          final item = cartItems[index];
-                          return Container(
-                            height: 145.h,
-                            width: double.infinity,
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              border: Border.all(
-                                color: Colors.grey[300]!,
-                                width: 1.w,
-                              ),
-                              borderRadius: BorderRadius.circular(24.r),
-                            ),
-                            child: Padding(
-                              padding: EdgeInsets.all(12.r),
-                              child: Row(
-                                children: [
-                                  Container(
-                                    height: 120.h,
-                                    width: 105.w,
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(20.r),
-                                      color: Colors.grey[100],
-                                    ),
-                                    child: ClipRRect(
-                                      borderRadius: BorderRadius.circular(20.r),
-                                      child:
-                                          item.product.image.startsWith(
-                                                'http://',
-                                              ) ||
-                                              item.product.image.startsWith(
-                                                'https://',
-                                              )
-                                          ? Image.network(
-                                              item.product.image,
-                                              height: double.infinity,
-                                              width: double.infinity,
-                                              fit: BoxFit.cover,
-                                              errorBuilder:
-                                                  (
-                                                    context,
-                                                    error,
-                                                    stackTrace,
-                                                  ) => Icon(
-                                                    Icons.image,
-                                                    size: 40.r,
-                                                    color: Colors.grey,
-                                                  ),
-                                            )
-                                          : Image.asset(
-                                              item.product.image,
-                                              height: double.infinity,
-                                              width: double.infinity,
-                                              fit: BoxFit.cover,
-                                              errorBuilder:
-                                                  (
-                                                    context,
-                                                    error,
-                                                    stackTrace,
-                                                  ) => Icon(
-                                                    Icons.image,
-                                                    size: 40.r,
-                                                    color: Colors.grey,
-                                                  ),
-                                            ),
-                                    ),
-                                  ),
-                                  Gap(12.w),
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              "ORIGINAL STOCK",
-                                              style: TextStyle(
-                                                fontSize: 12.sp,
-                                                color: Colors.grey[400],
-                                                letterSpacing: 1.2,
-                                                fontWeight: FontWeight.w600,
-                                              ),
-                                            ),
-                                            GestureDetector(
-                                              onTap: () {
-                                                cartProvider.removeFromCart(
-                                                  item,
-                                                );
-                                              },
-                                              child: Icon(
-                                                Icons.delete_outline_rounded,
-                                                size: 22.r,
-                                                color: Colors.grey[500],
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                        Text(
-                                          item.product.name,
-                                          maxLines: 1,
-                                          overflow: TextOverflow.ellipsis,
-                                          style: TextStyle(
-                                            fontSize: 17.sp,
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.black,
-                                          ),
-                                        ),
-                                        Text(
-                                          'Size ${item.size}',
-                                          style: TextStyle(
-                                            color: Colors.grey[500],
-                                            fontSize: 14.sp,
-                                            fontWeight: FontWeight.w500,
-                                          ),
-                                        ),
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.center,
-                                          children: [
-                                            Text(
-                                              '\$${item.totalPrice.toStringAsFixed(0)}',
-                                              style: TextStyle(
-                                                fontSize: 20.sp,
-                                                color: Colors.black,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
-                                            Container(
-                                              height: 42.h,
-                                              decoration: BoxDecoration(
-                                                borderRadius:
-                                                    BorderRadius.circular(25.r),
-                                                border: Border.all(
-                                                  color: Colors.grey[300]!,
-                                                  width: 1.w,
-                                                ),
-                                                color: Colors.white,
-                                              ),
-                                              child: Row(
-                                                mainAxisSize: MainAxisSize.min,
-                                                children: [
-                                                  GestureDetector(
-                                                    onTap: () {
-                                                      cartProvider
-                                                          .decrementQuantity(
-                                                            item,
-                                                          );
-                                                    },
-                                                    child: Padding(
-                                                      padding:
-                                                          EdgeInsets.symmetric(
-                                                            horizontal: 12.w,
-                                                          ),
-                                                      child: Icon(
-                                                        Icons.remove,
-                                                        size: 18.r,
-                                                        color: Colors.black,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  Text(
-                                                    "${item.quantity}",
-                                                    style: TextStyle(
-                                                      fontSize: 16.sp,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      color: Colors.black,
-                                                    ),
-                                                  ),
-                                                  Gap(6.w),
-                                                  GestureDetector(
-                                                    onTap: () {
-                                                      cartProvider
-                                                          .incrementQuantity(
-                                                            item,
-                                                          );
-                                                    },
-                                                    child: Container(
-                                                      height: 32.h,
-                                                      width: 32.w,
-                                                      margin: EdgeInsets.only(
-                                                        right: 4.w,
-                                                        top: 3.h,
-                                                        bottom: 3.h,
-                                                        left: 2.w,
-                                                      ),
-                                                      decoration:
-                                                          const BoxDecoration(
-                                                            shape:
-                                                                BoxShape.circle,
-                                                            color: Colors.black,
-                                                          ),
-                                                      child: Center(
-                                                        child: Icon(
-                                                          Icons.add,
-                                                          size: 18.r,
-                                                          color: Colors.white,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          );
-                        },
-                        separatorBuilder: (context, index) {
-                          return Gap(12.h);
-                        },
-                        itemCount: cartItems.length,
-                      ),
-              ),
-            ],
-          ),
+          ],
         ),
+      ),
+    );
+  }
+
+  Widget _stepperButton({
+    required IconData icon,
+    required VoidCallback onTap,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(AppRadius.pill),
+      child: Padding(
+        padding: EdgeInsets.all(6.r),
+        child: Icon(icon, size: 16.r, color: AppColors.text),
       ),
     );
   }
