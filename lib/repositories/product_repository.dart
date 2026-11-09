@@ -130,7 +130,7 @@ class MockProductRepository implements ProductRepository {
           "Cushioned lifestyle trainer engineered with shock-absorbing foam sole and lightweight breathable knit mesh upper.",
       images: [
         "assets/images/shoes-running-sneakers-design_849407-6889.jpg",
-        "assets/images/classic-sneaker-sport-street-wear-fashionable-athletic-apparellight-red-blue_1100418-709.avif",
+        "assets/images/classic-sneaker-sport-street-wear-fashionable-athletic-apparellight-red-blue_1100418-709.jpg",
       ],
       sizes: ["40", "41", "42", "43", "44", "45"],
       colors: ["Midnight Black", "Heather Grey", "Off White", "Deep Navy"],

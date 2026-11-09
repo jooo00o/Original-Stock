@@ -229,122 +229,207 @@ class _MainScreenState extends State<MainScreen> {
                       ),
                     ],
                   ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: List.generate(_navItems.length, (index) {
-                      final item = _navItems[index];
-                      final bool isSelected = activeIndex == index;
-                      final String label = item['label'] as String;
-                      final String iconPath = item['icon'] as String;
-                      final IconData fallbackIcon =
-                          item['fallbackIcon'] as IconData;
+                  child: LayoutBuilder(
+                    builder: (context, constraints) {
+                      final int itemCount = _navItems.length;
+                      final double itemWidth = constraints.maxWidth / itemCount;
+                      final double pillHeight = 46.h;
+                      final double pillWidth = itemWidth - 4.w;
+                      final double pillLeft =
+                          (itemWidth * activeIndex) + (itemWidth - pillWidth) / 2;
+                      final double pillTop =
+                          (constraints.maxHeight - pillHeight) / 2;
 
-                      return GestureDetector(
-                        onTap: () => mainNavController.goToTab(index),
-                        child: AnimatedContainer(
-                          duration: kTab,
-                          curve: kDecel,
-                          padding: EdgeInsets.symmetric(
-                            horizontal: isSelected ? 16.w : 12.w,
-                            vertical: 8.h,
-                          ),
-                          decoration: isSelected
-                              ? GradientBox.decoration(
-                                  gradient: AppColors.primaryGradient,
-                                  borderRadius:
-                                      BorderRadius.circular(AppRadius.pill),
-                                )
-                              : BoxDecoration(
-                                  color: Colors.transparent,
-                                  borderRadius:
-                                      BorderRadius.circular(AppRadius.pill),
-                                ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Stack(
-                                clipBehavior: Clip.none,
-                                children: [
-                                  Image.asset(
-                                    iconPath,
-                                    height: 22.r,
-                                    width: 22.r,
-                                    color: isSelected
-                                        ? AppColors.white
-                                        : AppColors.textSecondary,
-                                    errorBuilder: (
-                                      context,
-                                      error,
-                                      stackTrace,
-                                    ) => Icon(
-                                      fallbackIcon,
-                                      size: 22.r,
-                                      color: isSelected
-                                          ? AppColors.white
-                                          : AppColors.textSecondary,
-                                    ),
+                      return Stack(
+                        clipBehavior: Clip.none,
+                        children: [
+                          // 1. Sliding indicator capsule running continuously behind the tabs
+                          AnimatedPositioned(
+                            duration: kTab,
+                            curve: kDecel,
+                            left: pillLeft,
+                            top: pillTop,
+                            width: pillWidth,
+                            height: pillHeight,
+                            child: Container(
+                              decoration: GradientBox.decoration(
+                                gradient: AppColors.primaryGradient,
+                                borderRadius:
+                                    BorderRadius.circular(AppRadius.pill),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: AppColors.primary
+                                        .withValues(alpha: 0.32),
+                                    blurRadius: 10,
+                                    offset: const Offset(0, 3),
                                   ),
-                                  if (label == 'Cart' &&
-                                      cartCount > 0 &&
-                                      !isSelected)
-                                    Positioned(
-                                      top: -4.h,
-                                      right: -6.w,
-                                      child: Container(
-                                        padding: EdgeInsets.symmetric(
-                                          horizontal: 4.w,
-                                          vertical: 1.h,
-                                        ),
-                                        decoration: BoxDecoration(
-                                          color: AppColors.primary,
-                                          borderRadius:
-                                              BorderRadius.circular(8.r),
-                                        ),
-                                        constraints: BoxConstraints(
-                                          minWidth: 14.r,
-                                          minHeight: 14.r,
-                                        ),
-                                        child: Text(
-                                          cartCount > 9 ? '9+' : '$cartCount',
-                                          textAlign: TextAlign.center,
-                                          style: TextStyle(
-                                            fontFamily: AppText.fontFamily,
-                                            fontSize: 9.sp,
-                                            fontWeight: FontWeight.w700,
-                                            color: AppColors.white,
-                                            height: 1,
+                                ],
+                              ),
+                            ),
+                          ),
+
+                          // 2. Tab items row sitting on top of the sliding indicator
+                          Row(
+                            children: List.generate(itemCount, (index) {
+                              final item = _navItems[index];
+                              final bool isSelected = activeIndex == index;
+                              final String label = item['label'] as String;
+                              final String iconPath = item['icon'] as String;
+                              final IconData fallbackIcon =
+                                  item['fallbackIcon'] as IconData;
+
+                              return Expanded(
+                                child: GestureDetector(
+                                  behavior: HitTestBehavior.opaque,
+                                  onTap: () => mainNavController.goToTab(index),
+                                  child: SizedBox(
+                                    height: constraints.maxHeight,
+                                    child: Center(
+                                      child: FittedBox(
+                                        fit: BoxFit.scaleDown,
+                                        child: Padding(
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: 4.w),
+                                          child: Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              Stack(
+                                                clipBehavior: Clip.none,
+                                                children: [
+                                                  TweenAnimationBuilder<Color?>(
+                                                    duration: const Duration(
+                                                        milliseconds: 240),
+                                                    curve: Curves.easeOutCubic,
+                                                    tween: ColorTween(
+                                                      end: isSelected
+                                                          ? AppColors.white
+                                                          : AppColors
+                                                              .textSecondary,
+                                                    ),
+                                                    builder:
+                                                        (context, color, _) {
+                                                      final effectiveColor =
+                                                          color ??
+                                                              (isSelected
+                                                                  ? AppColors
+                                                                      .white
+                                                                  : AppColors
+                                                                      .textSecondary);
+                                                      return Image.asset(
+                                                        iconPath,
+                                                        height: 22.r,
+                                                        width: 22.r,
+                                                        color: effectiveColor,
+                                                        errorBuilder: (
+                                                          context,
+                                                          error,
+                                                          stackTrace,
+                                                        ) =>
+                                                            Icon(
+                                                          fallbackIcon,
+                                                          size: 22.r,
+                                                          color:
+                                                              effectiveColor,
+                                                        ),
+                                                      );
+                                                    },
+                                                  ),
+                                                  if (label == 'Cart' &&
+                                                      cartCount > 0 &&
+                                                      !isSelected)
+                                                    Positioned(
+                                                      top: -4.h,
+                                                      right: -6.w,
+                                                      child: Container(
+                                                        padding: EdgeInsets
+                                                            .symmetric(
+                                                          horizontal: 4.w,
+                                                          vertical: 1.h,
+                                                        ),
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          color:
+                                                              AppColors.primary,
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(
+                                                                      8.r),
+                                                        ),
+                                                        constraints:
+                                                            BoxConstraints(
+                                                          minWidth: 14.r,
+                                                          minHeight: 14.r,
+                                                        ),
+                                                        child: Text(
+                                                          cartCount > 9
+                                                              ? '9+'
+                                                              : '$cartCount',
+                                                          textAlign:
+                                                              TextAlign.center,
+                                                          style: TextStyle(
+                                                            fontFamily: AppText
+                                                                .fontFamily,
+                                                            fontSize: 9.sp,
+                                                            fontWeight:
+                                                                FontWeight.w700,
+                                                            color:
+                                                                AppColors.white,
+                                                            height: 1,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                ],
+                                              ),
+                                              ClipRect(
+                                                child: AnimatedSize(
+                                                  duration: const Duration(
+                                                      milliseconds: 240),
+                                                  curve: Curves.easeOutCubic,
+                                                  child: isSelected
+                                                      ? Row(
+                                                          mainAxisSize:
+                                                              MainAxisSize.min,
+                                                          children: [
+                                                            Gap(5.w),
+                                                            Text(
+                                                              label,
+                                                              maxLines: 1,
+                                                              overflow:
+                                                                  TextOverflow
+                                                                      .clip,
+                                                              style: TextStyle(
+                                                                fontFamily:
+                                                                    AppText
+                                                                        .fontFamily,
+                                                                fontSize: 12.sp,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w700,
+                                                                color: AppColors
+                                                                    .white,
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        )
+                                                      : const SizedBox.shrink(),
+                                                ),
+                                              ),
+                                            ],
                                           ),
                                         ),
                                       ),
                                     ),
-                                ],
-                              ),
-                              AnimatedSize(
-                                duration: kTab,
-                                curve: kDecel,
-                                child: isSelected
-                                    ? Row(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          Gap(6.w),
-                                          Text(
-                                            label,
-                                            style: TextStyle(
-                                              fontFamily: AppText.fontFamily,
-                                              fontSize: 13.sp,
-                                              fontWeight: FontWeight.w700,
-                                              color: AppColors.white,
-                                            ),
-                                          ),
-                                        ],
-                                      )
-                                    : const SizedBox.shrink(),
-                              ),
-                            ],
+                                  ),
+                                ),
+                              );
+                            }),
                           ),
-                        ),
+                        ],
                       );
-                    }),
+                    },
                   ),
                 ),
               );

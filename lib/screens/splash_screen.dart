@@ -26,6 +26,16 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Pre-cache onboarding images during the splash delay so they are instantly
+    // decoded in memory before OnboardingScreen is pushed.
+    for (final item in OnboardingScreen.defaultItems) {
+      precacheImage(AssetImage(item.image), context);
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,

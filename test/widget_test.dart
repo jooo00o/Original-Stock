@@ -6,6 +6,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:original_stock/core/app_motion.dart';
 import 'package:original_stock/core/app_theme.dart';
 import 'package:original_stock/main.dart';
+import 'package:original_stock/onboarding/onboarding_screen.dart';
 import 'package:original_stock/provider.dart';
 import 'package:original_stock/screens/checkout_screen.dart';
 import 'package:original_stock/screens/home_screen.dart';
@@ -509,5 +510,84 @@ void main() {
     await tester.pump(kTab);
     expect(mainNavController.currentIndex, 0);
     expect(find.text('Super Sale'), findsOneWidget);
+  });
+
+  testWidgets('OnboardingScreen architecture and fast slide rendering test',
+      (WidgetTester tester) async {
+    expect(OnboardingScreen.defaultItems.length, 3);
+    expect(OnboardingScreen.defaultItems[0].title, 'For the Modern Man');
+    expect(OnboardingScreen.defaultItems[1].title, 'Quiet Luxury, Everyday');
+    expect(OnboardingScreen.defaultItems[2].title, 'Shop The Season');
+
+    await tester.pumpWidget(
+      ScreenUtilInit(
+        designSize: const Size(402, 874),
+        builder: (context, child) => const MaterialApp(
+          home: OnboardingScreen(),
+        ),
+      ),
+    );
+
+    // Initial frame on slide 0
+    expect(find.text('For the Modern Man'), findsOneWidget);
+    expect(find.text('Next'), findsOneWidget);
+    expect(find.text('Skip'), findsOneWidget);
+
+    // Tap Next to advance to slide 1
+    await tester.tap(find.text('Next'));
+    await tester.pumpAndSettle();
+    expect(find.text('Quiet Luxury, Everyday'), findsOneWidget);
+
+    // Tap Next to advance to slide 2
+    await tester.tap(find.text('Next'));
+    await tester.pumpAndSettle();
+    expect(find.text('Shop The Season'), findsOneWidget);
+    expect(find.text('Get Started'), findsOneWidget);
+  });
+
+  testWidgets(
+      'Bottom nav has fluid sliding pill indicator (AnimatedPositioned)',
+      (WidgetTester tester) async {
+    tester.view.physicalSize = const Size(402, 874);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(() {
+      tester.view.resetPhysicalSize();
+      tester.view.resetDevicePixelRatio();
+    });
+
+    final provider = ProviderProduct();
+
+    await tester.pumpWidget(
+      ChangeNotifierProvider<ProviderProduct>.value(
+        value: provider,
+        child: ScreenUtilInit(
+          designSize: const Size(402, 874),
+          builder: (context, child) => MaterialApp(
+            theme: AppTheme.theme,
+            home: const MainScreen(),
+          ),
+        ),
+      ),
+    );
+
+    await tester.pump(const Duration(milliseconds: 1000));
+    await tester.pumpAndSettle();
+
+    // Verify AnimatedPositioned sliding pill exists
+    final animatedPositionedFinder = find.byType(AnimatedPositioned);
+    expect(animatedPositionedFinder, findsOneWidget);
+
+    final initialPill =
+        tester.widget<AnimatedPositioned>(animatedPositionedFinder);
+    final initialLeft = initialPill.left;
+
+    // Switch to Cart
+    mainNavController.goToTab(1);
+    await tester.pump();
+    await tester.pump(kTab);
+
+    final movedPill =
+        tester.widget<AnimatedPositioned>(animatedPositionedFinder);
+    expect(movedPill.left, greaterThan(initialLeft!));
   });
 }
